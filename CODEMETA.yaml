@@ -31,9 +31,9 @@
 categories:
   # - ai-ml
   # - performance-and-workflow
-  - scientific-software
+  # - scientific-software
   # - simulation
-  # - tools
+  - tools
   # - visualization
 
 themes:
@@ -132,19 +132,19 @@ themes:
   #     - Artificial intelligence
   #     - Biometrics
   #     - Cloud computing and virtualization
-  #     - Complex systems
+        - Complex systems
   #     - Computational science
-  #     - Conformance testing
+        - Conformance testing
   #     - Cyber-physical systems
   #         - Smart cities
-  #     - Cybersecurity
-  #         - Configuration and vulnerability management
+        - Cybersecurity
+            - Configuration and vulnerability management
   #         - Cryptography
   #         - Cybersecurity Education and Workforce Development
-  #         - Risk management
-  #     - Data and informatics
+            - Risk management
+        - Data and informatics
   #         - Human language technology
-  #         - Information retrieval
+            - Information retrieval
   #         - Natural language processing
   #     - Data entry
   #     - Federal information standards (FIPS)
@@ -300,12 +300,12 @@ themes:
   #     - Resilient materials
   #     - Windstorm impact reduction
   #
-  # - Standards
+    - Standards
   #     - Accreditation
   #     - Calibration Services
-  #     - Conformity assessment
-  #     - Documentary standards
-  #     - Frameworks
+        - Conformity assessment
+        - Documentary standards
+        - Frameworks
   #     - Reference data
   #     - Reference instruments
   #     - Reference materials
