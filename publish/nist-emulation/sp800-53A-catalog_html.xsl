@@ -47,9 +47,7 @@
                <xsl:attribute name="open">open</xsl:attribute>
             </xsl:if>
             <summary class="h3">
-               <span class="label">
-                  <xsl:apply-templates mode="part-number" select="prop[@name = 'label'][1]"/>
-               </span>
+               <xsl:call-template name="control-label"/>
                <xsl:for-each select="ancestor::control/title">
                   <small>
                      <xsl:apply-templates/>
@@ -91,6 +89,15 @@
          <!-- impact table went here -->
       </div>
    </xsl:template>
+   
+   <xsl:template name="control-label">
+      <span class="label">
+         <xsl:apply-templates mode="part-number" select="prop[@name = 'label'][1]"/>
+      </span>
+   </xsl:template>
+   
+   <!--tableC-{@id}-->
+   
    
    <xsl:template name="unconditional-listing">
       <xsl:param name="things"/>
