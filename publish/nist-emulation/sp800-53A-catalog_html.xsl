@@ -330,6 +330,10 @@
    
    <xsl:template match="part/prop[@name='label']"/>
    
+   
+   <!-- dropping inline decorations for parts in case any come through e.g. group/part -->
+   <xsl:template match="part" mode="decorate-inline"/>
+   
    <xsl:template match="group" mode="title">
       <xsl:apply-templates select="./title"/>
    </xsl:template>
@@ -435,6 +439,9 @@
          </h4>
    </xsl:template>
       
+   <!-- picked up in no-mode -->
+   <xsl:template match="part" mode="title"/>
+   
    <xsl:template match="*" mode="title">
       <p class="title">
          <xsl:value-of select="@name"/>

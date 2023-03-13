@@ -111,6 +111,16 @@ TO DO:
     </fo:table>
   </xsl:template>
   
+  <xsl:template priority="5" match="section[@class='group']/details/div[contains-token(@class,'overview')]">
+    <fo:block border-top-style="solid" border-top-width="1pt" border-top-color="#4472c4"
+      border-bottom-style="solid" border-bottom-width="1pt" border-bottom-color="#4472c4"
+      font-style="italic"
+      margin-left="1em" margin-right="1em" padding-top="1em" padding-bottom="1em" space-before="2em" color="#4472c4">
+      <xsl:copy-of select="@id"/>
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
   
   <xsl:template priority="5" match="section[@class='group']/details/summary">
     <xsl:variable name="family-id" select="parent::details/parent::section/@id"/>
