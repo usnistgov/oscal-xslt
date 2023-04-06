@@ -187,6 +187,37 @@ TO DO:
     </fo:block-container>
   </xsl:template>
   
+  <xsl:template match="div[contains-token(@class,'control')]">
+    <xsl:variable name="enhancement" select="ancestor::div/tokenize(@class,'\s+')='control'"/>
+    <fo:block space-before="1em">
+      <xsl:copy-of select="@id"/>
+      <fo:list-block provisional-distance-between-starts="{ if ($enhancement) then '0.3' else '0.5' }in"
+        provisional-label-separation="1em"  space-before="0.5em">
+        <fo:list-item space-before="0.5em">
+          <fo:list-item-label>
+            <fo:block font-weight="bold" font-family="{ $label-font-family }" font-size="{ $big }">
+              <!--forcing a link in here b/c stripped from value -->
+              <xsl:variable name="tableC-target" select="details/summary/span[@class='label']/a/@href/substring-after(.,'#')"/>
+              <fo:basic-link color="blue" internal-destination="{ $tableC-target }">
+                <xsl:choose>
+                  <xsl:when test="$enhancement">
+                    <xsl:value-of select="replace(details/summary/span[1],'^[^\(]+','')"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="details/summary/span[@class='label']"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </fo:basic-link>
+            </fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body start-indent="body-start()">
+            <xsl:apply-templates select="." mode="control-contents"/>
+          </fo:list-item-body>
+        </fo:list-item>
+      </fo:list-block>
+    </fo:block>
+  </xsl:template>
+  
   <xsl:template match="span[@class='tableC-no']">
     <fo:inline-container width="0.5in">
       <fo:block>
@@ -244,7 +275,8 @@ TO DO:
   </xsl:template>
 
   <xsl:template mode="enhance-AppC-cell" match="tr[ends-with(@class,'withdrawn')]/*" priority="101">
-    <xsl:attribute name="color">darkgrey</xsl:attribute>
+    <!--<xsl:attribute name="color">black</xsl:attribute>-->
+    <xsl:attribute name="background-color">gainsboro</xsl:attribute>
     <xsl:next-match/>
   </xsl:template>
   
@@ -257,6 +289,8 @@ TO DO:
     <xsl:attribute name="font-weight">bold</xsl:attribute>
     <xsl:next-match/>
   </xsl:template>
+  
+  <xsl:template name="process-style"><xsl:param name="style"/></xsl:template>
   
   <!--<td class="control-no">-->
   <xsl:template match="*" mode="enhance-AppC-cell">
