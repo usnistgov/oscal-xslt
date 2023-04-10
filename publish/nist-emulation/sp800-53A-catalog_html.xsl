@@ -540,13 +540,6 @@
       </tr>
    </xsl:template>
    
-   
-   <xsl:template match="resource">
-      <td class="{ local-name() }">
-         <xsl:apply-templates/>
-      </td>   
-   </xsl:template>
-   
    <xsl:template match="resource/*">
       <td class="{ local-name() }">
          <xsl:apply-templates/>

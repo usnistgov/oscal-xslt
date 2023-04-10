@@ -111,6 +111,38 @@ TO DO:
     </fo:table>
   </xsl:template>
   
+  <xsl:template match="div[contains-token(@class,'control')]">
+    <xsl:variable name="enhancement" select="ancestor::div/tokenize(@class,'\s+')='control'"/>
+    <fo:block space-before="1em">
+      <xsl:copy-of select="@id"/>
+      <fo:list-block provisional-distance-between-starts="{ if ($enhancement) then '0.3' else '0.5' }in"
+        provisional-label-separation="1em"  space-before="0.5em">
+        <fo:list-item space-before="0.5em">
+          <fo:list-item-label>
+            <fo:block font-weight="bold" font-family="{ $label-font-family }" font-size="{ $big }">
+              <!--forcing a link in here b/c stripped from value -->
+              <xsl:variable name="tableC-target" select="details/summary/span[@class='label']/a/@href/substring-after(.,'#')"/>
+              <fo:basic-link color="blue" internal-destination="{ $tableC-target }">
+                <xsl:choose>
+                  <xsl:when test="$enhancement">
+                    <xsl:value-of select="replace(details/summary/span[1],'^[^\(]+','')"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="details/summary/span[@class='label']"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </fo:basic-link>
+            </fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body start-indent="body-start()">
+            <xsl:apply-templates select="." mode="control-contents"/>
+          </fo:list-item-body>
+        </fo:list-item>
+      </fo:list-block>
+    </fo:block>
+  </xsl:template>
+  
+  
   <xsl:template priority="5" match="section[@class='group']/details/div[contains-token(@class,'overview')]">
     <fo:block border-top-style="solid" border-top-width="1pt" border-top-color="#4472c4"
       border-bottom-style="solid" border-bottom-width="1pt" border-bottom-color="#4472c4"
@@ -170,6 +202,16 @@ TO DO:
     </fo:basic-link>
   </xsl:template>
   
+  <!--<p><span class="inline-head">Related controls</span>: None.</p>-->
+  <xsl:template match="p[span[@class='inline-head']='Related controls'][. = ': None.']">
+    <xsl:message>Matching</xsl:message>
+  </xsl:template>
+  
+  <!--<div class="part enhancements  none">
+    <details>
+      <summary class="h4"><span class="inline-head">Control enhancements</span> <span class="count"> None</span></summary>
+    </details>
+  </div>-->
   
   <xsl:template match="span[@class='smallcaps']" mode="tables">
     <fo:inline text-transform="uppercase" font-weight="normal" font-size="smaller">

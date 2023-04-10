@@ -650,9 +650,6 @@
         <fo:list-item space-before="0.5em">
           <fo:list-item-label>
             <fo:block font-weight="bold" font-family="{ $label-font-family }" font-size="{ $big }">
-              <!--forcing a link in here b/c stripped from value -->
-              <xsl:variable name="tableC-target" select="details/summary/span[@class='label']/a/@href/substring-after(.,'#')"/>
-              <fo:basic-link color="blue" internal-destination="{ $tableC-target }">
               <xsl:choose>
                 <xsl:when test="$enhancement">
                   <xsl:value-of select="replace(details/summary/span[1],'^[^\(]+','')"/>
@@ -661,7 +658,6 @@
                   <xsl:value-of select="details/summary/span[@class='label']"/>
                 </xsl:otherwise>
               </xsl:choose>
-              </fo:basic-link>
             </fo:block>
           </fo:list-item-label>
           <fo:list-item-body start-indent="body-start()">
