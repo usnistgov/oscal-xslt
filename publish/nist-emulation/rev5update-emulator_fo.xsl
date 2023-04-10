@@ -297,7 +297,12 @@ TO DO:
     <xsl:attribute name="font-weight">bold</xsl:attribute>
     <xsl:next-match/>
   </xsl:template>
-  
+
+  <xsl:template mode="enhance-AppC-cell" match="td[@class='control-title']" priority="98">
+    <xsl:attribute name="font-weight">bold</xsl:attribute>
+    <xsl:next-match/>
+  </xsl:template>
+
   <xsl:template name="process-style"><xsl:param name="style"/></xsl:template>
   
   <!--<td class="control-no">-->
