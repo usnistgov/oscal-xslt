@@ -180,6 +180,14 @@ TO DO:
     </fo:block>
   </xsl:template>
   
+  <!--special handling for control enhancements (nested controls)-->
+  <xsl:template priority="5" match="div[contains-token(@class,'control')]//div[contains-token(@class,'control')]//summary[contains-token(@class,'h3')]">
+    <fo:block font-family="{ $display-font-family }" keep-with-next="always" text-transform="uppercase" font-size="{ $small }">
+      <xsl:copy-of select="@id"/>
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
   <xsl:template match="div[@class='family-tableC']">
     <fo:block-container space-before="1em" page-break-before="always">
       <xsl:copy-of select="@id"/>
