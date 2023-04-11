@@ -516,13 +516,16 @@
    </xsl:template>
    
    <xsl:template match="back-matter" mode="back-matter">
-      <xsl:if test="exists(resource)">
-      <section class="references" id="references">
-         <details open="open">
-            <summary class="h3">References</summary>
-            <xsl:call-template name="make-resource-table"/>
-         </details>
-      </section>
+      <xsl:variable name="resource-table">
+         <xsl:call-template name="make-resource-table"/>
+      </xsl:variable>
+      <xsl:if test="exists($resource-table/*/*)">
+         <section class="references" id="references">
+            <details open="open">
+               <summary class="h3">References</summary>
+               <xsl:sequence select="$resource-table"/>
+            </details>
+         </section>
       </xsl:if>
    </xsl:template>
    

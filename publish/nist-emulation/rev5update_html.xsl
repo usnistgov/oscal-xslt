@@ -35,21 +35,14 @@
     
     <xsl:template match="back-matter"/>
     
-    <xsl:template match="back-matter" mode="back-matter">
-        <xsl:if test="exists(resource)">
-            <section class="references" id="references">
-                <details open="open">
-                    <summary class="h3">References</summary>
-                    <xsl:call-template name="make-resource-table"/>
-                 </details>
-            </section>
-        </xsl:if>
-    </xsl:template>
-    
     <xsl:template match="back-matter/resource">
         <tr class="resource" id="resource-{@uuid}">
             <xsl:apply-templates/>
         </tr>
+    </xsl:template>
+    
+    <xsl:template match="resource[empty(citation)]" priority="2">
+        <xsl:message expand-text="true">Dropping resource '{ title }' from display</xsl:message>
     </xsl:template>
     
     <xsl:template name="make-resource-table">
@@ -75,10 +68,6 @@
             </xsl:analyze-string>
         </xsl:value-of>
     </xsl:function>
-    
-    <xsl:template match="resource[empty(citation)]">
-        <xsl:message expand-text="true">dropping resource { title }</xsl:message>
-    </xsl:template>
     
     <xsl:template name="control-label">
         <span class="label">
