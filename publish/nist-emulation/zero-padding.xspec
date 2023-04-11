@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:o="http://csrc.nist.gov/ns/oscal/1.0"
+    xmlns="http://csrc.nist.gov/ns/oscal/1.0"
+    stylesheet="rev5update_html.xsl">
+    <x:scenario label="Padding 'SP800-53'">
+        <x:call function="o:zero-pad">
+            <x:param select="'SP800-53'"/></x:call>
+        <x:expect label="padded" select="'SP00800-00053'"/>
+    </x:scenario>
+    <x:scenario label="Padding 'SP80053'">
+        <x:call function="o:zero-pad">
+            <x:param select="'SP80053'"/></x:call>
+        <x:expect label="padded" select="'SP80053'"/>
+    </x:scenario>
+    <x:scenario label="Padding 'SP800-53A'">
+        <x:call function="o:zero-pad">
+            <x:param select="'SP800-53A'"/></x:call>
+        <x:expect label="padded" select="'SP00800-00053A'"/>
+    </x:scenario>
+    <x:scenario label="Padding 'SP800-53r5'">
+        <x:call function="o:zero-pad">
+            <x:param select="'SP800-53r5'"/></x:call>
+        <x:expect label="padded" select="'SP00800-00053r00005'"/>
+    </x:scenario>
+    <x:scenario label="Sorting a list already in order">
+        <x:context mode="back-matter">
+            <back-matter>
+                <resource uuid="0000">
+                    <title>SP 800-53</title>
+                    <citation/>
+                </resource>
+                <resource uuid="0000">
+                    <title>SP 800-53A</title>
+                    <citation/>
+                </resource>
+                <resource uuid="0000">
+                    <title>SP 800-5300</title>
+                    <citation/>
+                </resource>
+            </back-matter>
+        </x:context>
+        <x:expect label="rendered and sorted">
+            <section xmlns="http://www.w3.org/1999/xhtml"
+                class="references"
+                id="references">
+                <details open="open">
+                    <summary class="h3">References</summary>
+                    <table class="resources">
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-53</td>
+                            <td class="citation" />
+                        </tr>
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-53A</td>
+                            <td class="citation" />
+                        </tr>
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-5300</td>
+                            <td class="citation" />
+                        </tr>
+                    </table>
+                </details>
+            </section>
+        </x:expect>
+    </x:scenario>
+    <x:scenario label="Sorting a list not in order">
+        <x:context mode="back-matter">
+            <back-matter>
+                <resource uuid="0000">
+                    <title>SP 800-5300</title>
+                    <citation/>
+                </resource>
+                <resource uuid="0000">
+                    <title>SP 800-53A</title>
+                    <citation/>
+                </resource>
+                <resource uuid="0000">
+                    <title>SP 800-53</title>
+                    <citation/>
+                </resource>
+            </back-matter>
+        </x:context>
+        <x:expect label="rendered and sorted">
+            <section xmlns="http://www.w3.org/1999/xhtml"
+                class="references"
+                id="references">
+                <details open="open">
+                    <summary class="h3">References</summary>
+                    <table class="resources">
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-53</td>
+                            <td class="citation" />
+                        </tr>
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-53A</td>
+                            <td class="citation" />
+                        </tr>
+                        <tr class="resource" id="resource-0000">
+                            <td class="title">SP 800-5300</td>
+                            <td class="citation" />
+                        </tr>
+                    </table>
+                </details>
+            </section>
+        </x:expect>
+    </x:scenario>
+</x:description>

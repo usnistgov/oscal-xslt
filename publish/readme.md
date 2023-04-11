@@ -130,7 +130,6 @@ FOP is also, however, available in other forms such as XProc engines (XML Calaba
   
 *Developers should also take note that the XSLT and XSL code in this repository is written to be standards-conformant, and should have no formal dependency on the tools described here. Any conformant XSLT or XSL-FO processors should be able to execute these transformations as coded - including other versions of Saxon, other current XSLT engines, and other formatting engines supporting XSL (FO). If your testing shows this not to be the case please let us know.*
 
-
 ## Applications
 
 In the initial release, we provide support for formatting OSCAL *catalog* documents only. In addition to resources that are published and maintained specifically as catalogs, this class of documents includes also *resolved OSCAL profiles*, inasmuch as the OSCAL profile format (such as the NIST HIGH Baseline) resolves into a nominal catalog (presenting a selection of controls from the base catalog).
@@ -198,6 +197,10 @@ java -cp saxon-he-10.0.jar net.sf.saxon.Transform -t -s:latest-catalog.xml -xsl:
 ```  
 
 *Note that 'NIST emulation' does not imply any guarantee, warranty or endorsement from NIST.*
+
+#### "Template 2022 emulation"
+
+Additionally, a pair of XSLTs can be used together to produce PDF with adjusted formatting. It is *not* as fully featured as the NIST emulation variant as its results are not intended to be standalone. It does, however, capture the look and feel of the latest internal template to be offered at NIST.
 
 **Parameterization**
 
