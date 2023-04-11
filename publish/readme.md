@@ -198,10 +198,6 @@ java -cp saxon-he-10.0.jar net.sf.saxon.Transform -t -s:latest-catalog.xml -xsl:
 
 *Note that 'NIST emulation' does not imply any guarantee, warranty or endorsement from NIST.*
 
-#### "Template 2022 emulation"
-
-Additionally, a pair of XSLTs can be used together to produce PDF with adjusted formatting. It is *not* as fully featured as the NIST emulation variant as its results are not intended to be standalone. It does, however, capture the look and feel of the latest internal template to be offered at NIST.
-
 **Parameterization**
 
 Since this XSLT is a customization of the generic preview (HTML) XSLT, it accepts the same runtime parameters described above, either to "skin" the CSS or to suppress the Table of Contents.
