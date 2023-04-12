@@ -2,11 +2,11 @@
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
   xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
   xmlns:oscal="http://csrc.nist.gov/ns/oscal/1.0"
-  type="oscal:produce-html-and-pdf" name="produce-html-and-pdf">
+  type="oscal:render-oscal-fo-via-html" name="render-oscal-fo-via-html">
   
   <p:option name="result-pdf-path" select="'test.pdf'"/>
   
-  <p:input port="source" primary="true"/>
+  <p:input port="OSCAL" primary="true"/>
   <p:input port="parameters" kind="parameter"/>
   
   <p:serialization port="input" indent="true"/>
