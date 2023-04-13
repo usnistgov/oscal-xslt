@@ -37,4 +37,5 @@ mvn \
     -f "$POM_FILE" \
     exec:java \
     -Dexec.mainClass="$MAIN_CLASS" \
-    -Dexec.args="-oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS $PIPELINE result-pdf-path=$RESULT_PDF"
+    -Dcom.xmlcalabash.fo-processor="com.xmlcalabash.util.FoFOP" \
+    -Dexec.args="-iOSCAL=$CATALOG_XML -oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS $PIPELINE result-pdf-path=$RESULT_PDF"
