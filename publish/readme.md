@@ -132,14 +132,34 @@ FOP is also, however, available in other forms such as XProc engines (XML Calaba
 
 ## Applications
 
-In the initial release, we provide support for formatting OSCAL *catalog* documents only. In addition to resources that are published and maintained specifically as catalogs, this class of documents includes also *resolved OSCAL profiles*, inasmuch as the OSCAL profile format (such as the NIST HIGH Baseline) resolves into a nominal catalog (presenting a selection of controls from the base catalog).
+We currently provide stylesheets for formatting OSCAL *catalog* documents only. In addition to resources that are published and maintained specifically as catalogs, this also includes *resolved OSCAL profiles*, inasmuch as the OSCAL profile format (such as the NIST HIGH Baseline) resolves into a nominal catalog (presenting a selection of controls from the base catalog).
 
 Like most stylesheets designed for production, these do not produce runtime errors or warnings for bad inputs, instead working on the principle that all inputs however badly formed should be represented somehow. Nonetheless they have not been tested and cannot be expected to work consistently on input documents that are not formally valid to the OSCAL Catalog schema (XML version).
 
-In these instructions, we call the input document `home-catalog.xml`. It is presumed to be a valid OSCAL XML catalog document (referencing appropriate schemas). Adjust accordingly.
+For predictable results, be sure that inputs are valid OSCAL XML catalog documents (referencing appropriate schemas).
 
+### HTML production using XSLT in SaxonJS in nodeJS
 
-### HTML production
+Using SaxonJS and the XSLTs in this folder, HTML presentation versions of OSCAL Catalogs can be produced under nodeJS using the SaxonJS library. Use the command line syntax supported by the 
+SaxonJS processor.
+
+- https://www.npmjs.com/package/saxon-js (library)
+- https://www.npmjs.com/package/xslt3 (command-line interface)
+
+### HTML and PDF production using Maven
+
+Scripts are provided in this subdirectory that illustrate how Maven can be used to package Java libraries supporting a transformation runtime without any direct installation of Saxon, XML Calabash, FOP and their dependencies.
+
+- `mvn-make-catalog-html.sh` - syntax is `./mvn-make-catalog-html.sh inCatalog.xml outHTML.html`
+- `mvn-make-catalog-pdf.sh` - syntax is `./mvn-make-catalog-pdf.sh inCatalog.xml outPDF.pdf`
+
+Note: these installations can be touchy. Adapt as necessary. Pipelines invoked by either script can be provided with new or improved XSLT to give your data appropriate handling -- these examples are meant to serve as models, not to limit use in any way.
+
+At time of writing, the FOP processor produces long tracebacks. Silencing it requires some kind of FOP configuration setting from within Maven, or a small Java extension. Let us know of any easy solutions on offer.
+
+### HTML production using XSLT
+
+Details here concern how to use these resources from the command line, but apply also when using them within a developer environment, CI/CD or other context.
 
 #### Generic preview
 
@@ -202,7 +222,7 @@ java -cp saxon-he-10.0.jar net.sf.saxon.Transform -t -s:latest-catalog.xml -xsl:
 
 Since this XSLT is a customization of the generic preview (HTML) XSLT, it accepts the same runtime parameters described above, either to "skin" the CSS or to suppress the Table of Contents.
 
-### PDF production
+### PDF production using a XSLT, XML Calabash and FOP
 
 PDF production is supported by an XSLT 3.0 transformation applied to the *HTML (either 'preview' or 'NIST emulation') produced in earlier steps*.
 

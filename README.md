@@ -34,7 +34,7 @@ Generally speaking these are XSLT applications, either single transformations, s
 
 As such they will run on any platform supporting this industry-standard, publicly available and externally specified language. The leading open-source XSLT implementation currently is Saxon from [Saxonica](https://saxonica.com/welcome/welcome.xml), available for several platforms and frequently bundled with XML editors or IDE software. However, we also welcome reports respecting other XSLT implementations supporting the appropriate XSLT version (generally 3.0).
 
-See each project for details on its runtime requirements. Most often, single and stacked XSLTs can be executed using simple calls from a command prompt, or easily configured within tools. Pipelines may be implemented in XSLT 3.0, or may be supported via [XProc](https://xproc.org/), or both.
+See each project for details on its runtime requirements. Most often, single and stacked XSLTs can be executed using simple calls from a command prompt, or easily configured within tools. Pipelines may be implemented in XSLT 3.0, or may be supported via [XProc](https://xproc.org/), or both. Each folder should give further details in its README documentation.
 
 ## Contact information
 

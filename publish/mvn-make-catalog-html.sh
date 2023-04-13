@@ -31,6 +31,12 @@ POM_FILE="${SCRIPT_DIR}/../pom.xml"
 
 MAIN_CLASS="net.sf.saxon.Transform" # Saxon defined in pom.xml
 
+if [ -e "$RESULT_HTML" ]
+then 
+    echo "Deleting prior $RESULT_HTML ..."
+    rm -f ./$RESULT_HTML
+fi
+
 # mvn  -f ../pom.xml exec:java -Dexec.mainClass="com.xmlcalabash.drivers.Main"  -Dexec.args="-oHTML=test.html -oFO=/dev/null render-oscal-catalog.xpl
 mvn \
     -f "$POM_FILE" \
@@ -38,4 +44,7 @@ mvn \
     -Dexec.mainClass="$MAIN_CLASS" \
     -Dexec.args="-xsl:nist-emulation/sp800-53A-catalog_html.xsl -s:$CATALOG_XML -o:$RESULT_HTML $ADDITIONAL_ARGS"
 
-# echo "Results can be viewed in file://$(pwd)/$RESULT_HTML"
+if [ -e "$RESULT_HTML" ]
+then 
+    echo "Results can be viewed in $RESULT_HTML"
+fi

@@ -28,6 +28,16 @@
             <name>maven.restlet.org</name>
             <url>https://maven.restlet.talend.com</url>
         </repository>
+        <repository><!-- // For javax.media:jai_core:1.1.3 (for FOP) -->
+            <id>maven.geotoolkit.org</id>
+            <name>maven.geotoolkit.org</name>
+            <url>https://maven.geotoolkit.org</url>
+        </repository>
+        <repository><!-- // For com.sun.media:jai-codec:1.1.3 (for FOP) -->
+            <id>com.sun.media</id>
+            <name>com.sun.media</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -42,12 +52,11 @@
             <version>1.5.3-110</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.xmlcalabash/xmlcalabash1-print -->
-        <!-- throws an error if included :-(
-            <dependency>
+        <dependency>
             <groupId>com.xmlcalabash</groupId>
             <artifactId>xmlcalabash1-print</artifactId>
             <version>1.3.0</version>
-        </dependency>-->
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -75,6 +84,5 @@
             </plugin>
         </plugins>
     </build>
-    
     
 </project>

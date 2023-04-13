@@ -33,9 +33,23 @@ MAIN_CLASS="com.xmlcalabash.drivers.Main" # XML Calabash
 
 PIPELINE="render-oscal-catalog.xpl"
 
+
+if [ -e "$RESULT_PDF" ]
+then 
+    echo "Deleting prior $RESULT_PDF ..."
+    rm -f ./$RESULT_PDF
+fi
+
 mvn \
     -f "$POM_FILE" \
     exec:java \
     -Dexec.mainClass="$MAIN_CLASS" \
     -Dcom.xmlcalabash.fo-processor="com.xmlcalabash.util.FoFOP" \
-    -Dexec.args="-iOSCAL=$CATALOG_XML -oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS $PIPELINE result-pdf-path=$RESULT_PDF"
+    -Dexec.args="-iOSCAL=$CATALOG_XML -oSOURCE=/dev/null -oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS $PIPELINE result-pdf-path=$RESULT_PDF"
+
+
+
+if [ -e "$RESULT_PDF" ]
+then 
+    echo "Results can be viewed in $RESULT_PDF"
+fi

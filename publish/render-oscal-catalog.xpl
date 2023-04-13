@@ -4,15 +4,22 @@
   xmlns:oscal="http://csrc.nist.gov/ns/oscal/1.0"
   type="oscal:render-oscal-fo-via-html" name="render-oscal-fo-via-html">
   
+  <!-- Purpose: support HTML production, PDF production and debugging of an OSCAL Catalog production pipeline in XProc 1.0 -->
+  <!-- Note: uses 'sp800-53-emulator' HTML and XSLFO stylesheets to provide formatting templates -->
+  <!-- Input: a valid OSCAL catalog, but the processor does not halt for bad inputs when well-formed: GIGO -->
+  <!-- Output: ports expose SOURCE (echoing input), HTML and FO intermediate forms; additionally, a PDF file is created as a side effect by processing the XSL-FO with FOP -->  
+  
   <p:option name="result-pdf-path" select="'test.pdf'"/>
   
   <p:input port="OSCAL" primary="true"/>
   <p:input port="parameters" kind="parameter"/>
   
-  <p:serialization port="input" indent="true"/>
-  <p:output port="input" primary="false">
+  <p:serialization port="SOURCE" indent="true"/>
+  <p:output port="SOURCE" primary="false">
     <p:pipe port="result" step="input"/>
   </p:output>
+  
+  <p:serialization port="HTML" indent="true" method="xml"/>
   <p:output port="HTML" primary="false">
     <p:pipe port="result" step="make-html"/>
   </p:output>
@@ -22,7 +29,6 @@
     <p:pipe port="result" step="make-xsl-fo"/>
   </p:output>
   
-  <p:serialization port="HTML" indent="true" method="xml"/>
   
   <!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">-->
@@ -49,6 +55,5 @@
       <p:empty/>
     </p:input>
   </p:xsl-formatter>
-  
   
 </p:declare-step>
