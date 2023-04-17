@@ -66,7 +66,9 @@ If you are familiar with XSLT transformations, and have a preferred environment 
 ### Prerequisites for this guide
 
 * You are comfortable at the command line (e.g. *nix, Mac, Windows shell)
-* You are comfortable installing and running Java applications
+* You are comfortable installing and running Java applications *or* you have Maven installed and can follow and adapt step-by-step instructions
+
+The second category may skip to the section **HTML and PDF production using Maven**, below.
 
 Developers should take note that these transformations are designed to be integrated and embedded into end-user applications. These instructions apply only for producing outputs in a "bare bones" environment, for testing or lightweight use.
 
@@ -83,7 +85,6 @@ The Saxon processor from Saxonica.com is considered the benchmark XSLT 3.0 proce
 The Java applications we rely on here are SaxonHE (open source XSLT 3.0 engine from Saxonica) and Apache FOP. HTML can be produced using Saxon only. PDF requires the combination of Saxon and FOP.
 
 Since the HTML production does not require FOP, it can be achieved using an XSLT engine running on another platform, such as Saxon-C.
-
 
 #### Saxon
 
