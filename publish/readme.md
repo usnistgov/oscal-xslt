@@ -74,9 +74,9 @@ The stylesheets described, however, can be used inside any architecture or stack
 
 ### XSLT dependencies
 
-The XSLT is documented internally, but developers can assume that features of XSLT 3.0 are sometimes exploited, meaning these stylesheets will generally not run correctly, unaltered, in an XSLT 1.0 environment.
+The XSLT is documented internally, but developers can assume that features of XSLT 3.0 are sometimes exploited, meaning these stylesheets will generally not run correctly, unaltered, in an XSLT 1.0 environment, unless specifically marked as XSLT 1.0.
 
-The Saxon processor from Saxonica.com is the leading XSLT 3.0 processor and has been used for testing. Its open-source version is recommended. However, the XSLT code is conformant to standards and should also run in any (conformant) XSLT 3.0 engine.
+The Saxon processor from Saxonica.com is considered the benchmark XSLT 3.0 processor and has been used for testing. Its open-source version is recommended. However, the XSLT code intends conformance to standards and should also run in any (conformant) XSLT 3.0 engine.
 
 ### Java
 
@@ -112,7 +112,7 @@ The flags here:
 
 #### Apache FOP
 
-For easy production of lightly-formatted PDF from HTML, we rely on the open-source Apache FOP processor. Again, this can be switched out: use a different XSL engine or an entirely different HTML-to-PDF pathway for your PDF production.
+For production of lightly-formatted PDF from HTML, we rely on the open-source Apache FOP processor. Again, this can be switched out: use a different XSL engine or an entirely different HTML-to-PDF pathway for your PDF production.
 
 The Apache Foundation has a 
 [Quick Start Guide](https://xmlgraphics.apache.org/fop/quickstartguide.html) for FOP.
@@ -156,6 +156,10 @@ Scripts are provided in this subdirectory that illustrate how Maven can be used 
 Note: these installations can be touchy. Adapt as necessary. Pipelines invoked by either script can be provided with new or improved XSLT to give your data appropriate handling -- these examples are meant to serve as models, not to limit use in any way.
 
 At time of writing, the FOP processor produces long tracebacks. Silencing it requires some kind of FOP configuration setting from within Maven, or a small Java extension. Let us know of any easy solutions on offer.
+
+### PDF production using XProc 1.0 and XML Calabash
+
+The scripts configuring invocations of Maven can also be deconstructed into calls to XML Calabash directly under Java. Invoking FOP successfully using the XProc `xsl:formatter` step in XProc requires setting up XML Calabash with appropriate `jar` files on the classpath. See the [XML Calabash documentation](http://xmlcalabash.com/).
 
 ### HTML production using XSLT
 
@@ -222,7 +226,7 @@ java -cp saxon-he-10.0.jar net.sf.saxon.Transform -t -s:latest-catalog.xml -xsl:
 
 Since this XSLT is a customization of the generic preview (HTML) XSLT, it accepts the same runtime parameters described above, either to "skin" the CSS or to suppress the Table of Contents.
 
-### PDF production using a XSLT, XML Calabash and FOP
+### PDF production using XSLT and FOP
 
 PDF production is supported by an XSLT 3.0 transformation applied to the *HTML (either 'preview' or 'NIST emulation') produced in earlier steps*.
 
@@ -243,7 +247,6 @@ In general, a command line for producing a PDF version of the "NIST emulation" H
 ```bash
 > ./fop -xml latest-catalog-formatted.html -xsl nist-emulation/oscal_sp800-53-emulator_fo.xsl -pdf latest-catalog-formatted.pdf
 ```
-
 In this configuration, the first stage of the two-step process is embedded. In order to work with these stylesheets, however, the script `fop.sh` will have been modified to call SaxonHE instead of the built-in Java transformation engine (Xalan), which is used by default.
 
 The two transformations (producing HTML and FO format representations) can also be chained with the third (PDF production from FO format) for an end-to-end OSCAL-to-PDF pipeline.

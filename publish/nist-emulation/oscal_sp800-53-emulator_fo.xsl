@@ -14,12 +14,7 @@
   <xsl:variable name="big"        >10pt</xsl:variable>
   <xsl:variable name="extra-big"  >14pt</xsl:variable>
   
-  <!--<xsl:variable name="body-font-family"  >'Calibri'</xsl:variable>
-  <xsl:variable name="header-font-family">'Calibri'</xsl:variable>
-  <xsl:variable name="frame-font-family" >'Calibri'</xsl:variable>
-  <xsl:variable name="label-font-family" >'Calibri'</xsl:variable>-->
-  
-<!-- YMMV: try with and without quotes -->
+  <!-- YMMV: try with and without quotes -->
   <xsl:param name="use-font" as="xs:string">Calibri, sans-serif</xsl:param>
   
   <xsl:variable name="body-font-family"    select="$use-font"/>
@@ -34,8 +29,8 @@
   
   <xsl:param name="start-pageno" as="xs:string">1</xsl:param>
   
-  
   <xsl:import href="xhtml-tables-fo.xsl"/>
+  
   
   <!-- overriding import -->
   <xsl:template match="table">
@@ -80,8 +75,10 @@
               <dc:title>
                 <xsl:call-template name="doctitle-string"/>
               </dc:title>
-              <!--<dc:creator> XOXOXOXOX </dc:creator>
-              <dc:description>  XOXOXOXOX </dc:description>-->
+              <!-- Also permits other Dublin Core metadata viz. https://xmlgraphics.apache.org/fop/2.7/metadata.html -->
+              <!--
+                <dc:creator> XOXOXOXOX </dc:creator>
+                <dc:description>  XOXOXOXOX </dc:description> -->
             </rdf:Description>
           </rdf:RDF>
         </x:xmpmeta>
