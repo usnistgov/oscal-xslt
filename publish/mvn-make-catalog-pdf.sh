@@ -24,7 +24,7 @@ CATALOG_XML=$1
 [[ -z "${2-}" ]] && { echo "Error: RESULT_PDF not specified"; usage; exit 1; }
 RESULT_PDF=$2
 
-ADDITIONAL_ARGS=$(shift 2; echo $@)
+ADDITIONAL_ARGS=$(shift 2; echo ${*// /\\ })
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 POM_FILE="${SCRIPT_DIR}/../pom.xml"
@@ -45,7 +45,7 @@ mvn \
     exec:java \
     -Dexec.mainClass="$MAIN_CLASS" \
     -Dcom.xmlcalabash.fo-processor="com.xmlcalabash.util.FoFOP" \
-    -Dexec.args="-iOSCAL=$CATALOG_XML -oSOURCE=/dev/null -oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS $PIPELINE result-pdf-path=$RESULT_PDF"
+    -Dexec.args="-iOSCAL=\"$CATALOG_XML\" -oSOURCE=/dev/null -oHTML=/dev/null -oFO=/dev/null $ADDITIONAL_ARGS \"$PIPELINE\" result-pdf-path=\"$RESULT_PDF\""
 
 
 

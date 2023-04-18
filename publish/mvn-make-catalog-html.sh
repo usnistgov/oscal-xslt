@@ -24,7 +24,7 @@ CATALOG_XML=$1
 [[ -z "${2-}" ]] && { echo "Error: RESULT_HTML not specified"; usage; exit 1; }
 RESULT_HTML=$2
 
-ADDITIONAL_ARGS=$(shift 2; echo $@)
+ADDITIONAL_ARGS=$(shift 2; echo ${*// /\\ })
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 POM_FILE="${SCRIPT_DIR}/../pom.xml"
@@ -42,7 +42,7 @@ mvn \
     -f "$POM_FILE" \
     exec:java \
     -Dexec.mainClass="$MAIN_CLASS" \
-    -Dexec.args="-xsl:nist-emulation/sp800-53A-catalog_html.xsl -s:$CATALOG_XML -o:$RESULT_HTML $ADDITIONAL_ARGS"
+    -Dexec.args="-xsl:nist-emulation/sp800-53A-catalog_html.xsl -s:\"$CATALOG_XML\" -o:\"$RESULT_HTML\" $ADDITIONAL_ARGS"
 
 if [ -e "$RESULT_HTML" ]
 then 
