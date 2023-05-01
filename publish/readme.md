@@ -65,7 +65,7 @@ The XSLTs in the library for producing each of the result formats, are also depl
 
 The core logic of the HTML production pathway is OSCAL-to-HTML, with specialization to usage profiles of OSCAL.
 
-The core logic of the PDF production pathway is HTML-to-XSLFO, relying on an XSLFO (formatting object) implementation such as Apache FOP for the final conversion to results such as PDF. While any HTML might run without failure, this pathway is built specifically to support HTML as produced by the project's HTML-preview XSLT.
+The core logic of the PDF production pathway is HTML-to-XSL-FO, relying on an XSL-FO (formatting object) implementation such as Apache FOP for the final conversion to results such as PDF. While any HTML might run without failure, this pathway is built specifically to support HTML as produced by the project's HTML-preview XSLT.
 
 ## Command-line use
 
