@@ -25,6 +25,8 @@ div.ToC { margin-left: 2em; margin-top: 0em }
 details p.toc-listing { margin: 0em 0em 0em 1em }
 div.enhancements p.toc-listing { display: inline-block }
 
+.ToC details { margin-left: 0.8em }
+
 .toc-label { font-size: 90% }
 
 .toc-title { font-weight: bold }

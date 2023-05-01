@@ -275,6 +275,7 @@
   <xsl:template match="section">
     <fo:page-sequence master-reference="simple" force-page-count="no-force"
       initial-page-number="{ if (exists(preceding-sibling::section|preceding-sibling::main)) then 'auto' else $start-pageno}">
+      <xsl:copy-of select="@id"/>
       <fo:static-content flow-name="header" font-family="{ $frame-font-family }" >
         <xsl:apply-templates select="ancestor::body" mode="header-table"/>
       </fo:static-content>
@@ -295,7 +296,15 @@
       </fo:flow>
     </fo:page-sequence>
   </xsl:template>
+
+  <xsl:template match="section//section" priority="101">
+    <fo:block-container>
+      <xsl:copy-of select="@id"/>
+      <xsl:apply-templates/>
+    </fo:block-container>
+  </xsl:template>
   
+
   <xsl:template match="section" mode="footer">
     <xsl:call-template name="grid-footer">
       <xsl:with-param name="left-side">

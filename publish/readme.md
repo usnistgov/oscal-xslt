@@ -59,6 +59,14 @@ Since OSCAL structural semantics are reflected directly in the HTML class struct
 
 Where CSS applied to the generic results is not sufficient -- and especially to support advanced functionality such as indexing, dynamic analysis or data validations -- the XSLT can also be imported, supplemented, rewritten or adapted.
 
+Providing the XSLT with appropriate logic for your tagging should be considered the normal case.
+
+The XSLTs in the library for producing each of the result formats, are also deployed in layers; that is, any given XSLT file may provide most of its logic through importing other XSLTs in the library. The main 'entry' XSLT may be copied or extended in place, and modifications, extensions or adaptations may be made in any layer of the stack, to have either wide-ranging or narrow impacts *as appropriate*. The behavior of any customization can be isolated away from the default handling of XSLTs in the library taken as a set.
+
+The core logic of the HTML production pathway is OSCAL-to-HTML, with specialization to usage profiles of OSCAL.
+
+The core logic of the PDF production pathway is HTML-to-XSLFO, relying on an XSLFO (formatting object) implementation such as Apache FOP for the final conversion to results such as PDF. While any HTML might run without failure, this pathway is built specifically to support HTML as produced by the project's HTML-preview XSLT.
+
 ## Command-line use
 
 If you are familiar with XSLT transformations, and have a preferred environment for applying XSLT to XML, you can probably skip this section. If what you need to know is not given in the summary above, please let us know.
@@ -248,11 +256,16 @@ In general, a command line for producing a PDF version of the "NIST emulation" H
 ```bash
 > ./fop -xml latest-catalog-formatted.html -xsl nist-emulation/oscal_sp800-53-emulator_fo.xsl -pdf latest-catalog-formatted.pdf
 ```
+
 In this configuration, the first stage of the two-step process is embedded. In order to work with these stylesheets, however, the script `fop.sh` will have been modified to call SaxonHE instead of the built-in Java transformation engine (Xalan), which is used by default.
 
 The two transformations (producing HTML and FO format representations) can also be chained with the third (PDF production from FO format) for an end-to-end OSCAL-to-PDF pipeline.
 
 XML desktop applications, editors or IDEs may have support for XSL-FO based transformations (using FOP or a commercial engine) built in, along with features to support these configurations and others (for example, using them as libraries for other transformations).
+
+#### Errors in PDF production
+
+The FOP processor will not successfully conclude every run by producing a PDF output, even an 'incorrect' one; sometimes it will error out. It is however a design goal of these resources that they provide at least some results for any valid inputs. The developers would be interested to see any examples of valid OSCAL catalog inputs that do not complete successfully, under ordinary, duplicable configurations, using tools described here or other standards-conformant tools.
 
 ## Customization
 
