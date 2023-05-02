@@ -7,9 +7,12 @@
   <!-- Purpose: support HTML production, PDF production and debugging of an OSCAL Catalog production pipeline in XProc 1.0 -->
   <!-- Note: uses 'sp800-53-emulator' HTML and XSLFO stylesheets to provide formatting templates -->
   <!-- Input: a valid OSCAL catalog, but the processor does not halt for bad inputs when well-formed: GIGO -->
-  <!-- Output: ports expose SOURCE (echoing input), HTML and FO intermediate forms; additionally, a PDF file is created as a side effect by processing the XSL-FO with FOP -->  
+  <!-- Output: ports expose SOURCE (echoing input), HTML and FO intermediate forms; additionally, a PDF file is created as a side effect by processing the XSL-FO with FOP -->
+  <!-- Note: a runtime option 'try-formatting' may be set to 'no' to suppress the final formatting step. This can be useful for debugging or when producing HTML only. -->  
   
   <p:option name="result-pdf-path" select="'test.pdf'"/>
+  
+  <p:option name="try-formatting" select="'yes'"/>
   
   <p:input port="OSCAL" primary="true"/>
   <p:input port="parameters" kind="parameter"/>
@@ -49,11 +52,18 @@
     </p:input>
   </p:xslt>
   
-  <p:xsl-formatter name="make-pdf" content-type="application/pdf">
-    <p:with-option name="href" select="$result-pdf-path"/>
-    <p:input port="parameters">
-      <p:empty/>
-    </p:input>
-  </p:xsl-formatter>
-  
+  <p:choose>
+    <p:when test="not($try-formatting = 'no')">
+      <p:xsl-formatter name="make-pdf" content-type="application/pdf">
+        <p:with-option name="href" select="$result-pdf-path"/>
+        <p:input port="parameters">
+          <p:empty/>
+        </p:input>
+      </p:xsl-formatter>        
+    </p:when>
+    <p:otherwise>
+      <p:sink/>
+    </p:otherwise>
+  </p:choose>
+    
 </p:declare-step>
