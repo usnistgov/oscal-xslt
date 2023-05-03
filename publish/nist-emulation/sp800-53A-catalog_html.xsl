@@ -2,6 +2,7 @@
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:o="http://csrc.nist.gov/ns/oscal/1.0"
     xmlns="http://www.w3.org/1999/xhtml"
     xpath-default-namespace="http://csrc.nist.gov/ns/oscal/1.0"
     exclude-result-prefixes="#all">
@@ -47,9 +48,7 @@
                <xsl:attribute name="open">open</xsl:attribute>
             </xsl:if>
             <summary class="h3">
-               <span class="label">
-                  <xsl:apply-templates mode="part-number" select="prop[@name = 'label'][1]"/>
-               </span>
+               <xsl:call-template name="control-label"/>
                <xsl:for-each select="ancestor::control/title">
                   <small>
                      <xsl:apply-templates/>
@@ -91,6 +90,15 @@
          <!-- impact table went here -->
       </div>
    </xsl:template>
+   
+   <xsl:template name="control-label">
+      <span class="label">
+         <xsl:apply-templates mode="part-number" select="prop[@name = 'label'][1]"/>
+      </span>
+   </xsl:template>
+   
+   <!--tableC-{@id}-->
+   
    
    <xsl:template name="unconditional-listing">
       <xsl:param name="things"/>
@@ -323,6 +331,10 @@
    
    <xsl:template match="part/prop[@name='label']"/>
    
+   
+   <!-- dropping inline decorations for parts in case any come through e.g. group/part -->
+   <xsl:template match="part" mode="decorate-inline"/>
+   
    <xsl:template match="group" mode="title">
       <xsl:apply-templates select="./title"/>
    </xsl:template>
@@ -428,6 +440,9 @@
          </h4>
    </xsl:template>
       
+   <!-- picked up in no-mode -->
+   <xsl:template match="part" mode="title"/>
+   
    <xsl:template match="*" mode="title">
       <p class="title">
          <xsl:value-of select="@name"/>
@@ -502,13 +517,16 @@
    </xsl:template>
    
    <xsl:template match="back-matter" mode="back-matter">
-      <xsl:if test="exists(resource)">
-      <section class="references" id="references">
-         <details open="open">
-            <summary class="h3">References</summary>
-            <xsl:call-template name="make-resource-table"/>
-         </details>
-      </section>
+      <xsl:variable name="resource-table">
+         <xsl:call-template name="make-resource-table"/>
+      </xsl:variable>
+      <xsl:if test="exists($resource-table/*/*)">
+         <section class="references" id="references">
+            <details open="open">
+               <summary class="h3">References</summary>
+               <xsl:sequence select="$resource-table"/>
+            </details>
+         </section>
       </xsl:if>
    </xsl:template>
    
@@ -516,21 +534,32 @@
    
    <xsl:template name="make-resource-table">
       <table class="resources">
-         <xsl:apply-templates select="resource"/>
+         <xsl:apply-templates select="resource">
+            <xsl:sort select="child::title/string() => o:zero-pad()" order="ascending"/>
+         </xsl:apply-templates>
       </table>
    </xsl:template>
+   
+   <!-- Pads numeric substrings with zeroes to five (5) digits -->
+   <xsl:function name="o:zero-pad" as="xs:string">
+      <xsl:param name="n" as="xs:string"/>
+      <xsl:variable name="padstr" select="'00000'"/>
+      <xsl:value-of><!-- the instruction delivers a single text node, castable to a string -->
+         <xsl:analyze-string select="$n" regex="\d+">
+            <xsl:matching-substring>
+               <xsl:value-of select="number(.) => format-number($padstr)"/>
+            </xsl:matching-substring>
+            <xsl:non-matching-substring>
+               <xsl:value-of select="."/>
+            </xsl:non-matching-substring>
+         </xsl:analyze-string>
+      </xsl:value-of>
+   </xsl:function>
    
    <xsl:template match="back-matter/resource">
       <tr class="resource" id="resource-{@uuid}">
          <xsl:apply-templates/>
       </tr>
-   </xsl:template>
-   
-   
-   <xsl:template match="resource">
-      <td class="{ local-name() }">
-         <xsl:apply-templates/>
-      </td>   
    </xsl:template>
    
    <xsl:template match="resource/*">

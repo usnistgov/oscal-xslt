@@ -59,6 +59,14 @@ Since OSCAL structural semantics are reflected directly in the HTML class struct
 
 Where CSS applied to the generic results is not sufficient -- and especially to support advanced functionality such as indexing, dynamic analysis or data validations -- the XSLT can also be imported, supplemented, rewritten or adapted.
 
+Providing the XSLT with appropriate logic for your tagging should be considered the normal case.
+
+The XSLTs in the library for producing each of the result formats, are also deployed in layers; that is, any given XSLT file may provide most of its logic through importing other XSLTs in the library. The main 'entry' XSLT may be copied or extended in place, and modifications, extensions or adaptations may be made in any layer of the stack, to have either wide-ranging or narrow impacts *as appropriate*. The behavior of any customization can be isolated away from the default handling of XSLTs in the library taken as a set.
+
+The core logic of the HTML production pathway is OSCAL-to-HTML, with specialization to usage profiles of OSCAL.
+
+The core logic of the PDF production pathway is HTML-to-XSL-FO, relying on an XSL-FO (formatting object) implementation such as Apache FOP for the final conversion to results such as PDF. While any HTML might run without failure, this pathway is built specifically to support HTML as produced by the project's HTML-preview XSLT.
+
 ## Command-line use
 
 If you are familiar with XSLT transformations, and have a preferred environment for applying XSLT to XML, you can probably skip this section. If what you need to know is not given in the summary above, please let us know.
@@ -66,7 +74,9 @@ If you are familiar with XSLT transformations, and have a preferred environment 
 ### Prerequisites for this guide
 
 * You are comfortable at the command line (e.g. *nix, Mac, Windows shell)
-* You are comfortable installing and running Java applications
+* You are comfortable installing and running Java applications *or* you have Maven installed and can follow and adapt step-by-step instructions
+
+The second category may skip to the section **HTML and PDF production using Maven**, below.
 
 Developers should take note that these transformations are designed to be integrated and embedded into end-user applications. These instructions apply only for producing outputs in a "bare bones" environment, for testing or lightweight use.
 
@@ -74,16 +84,15 @@ The stylesheets described, however, can be used inside any architecture or stack
 
 ### XSLT dependencies
 
-The XSLT is documented internally, but developers can assume that features of XSLT 3.0 are sometimes exploited, meaning these stylesheets will generally not run correctly, unaltered, in an XSLT 1.0 environment.
+The XSLT is documented internally, but developers can assume that features of XSLT 3.0 are sometimes exploited, meaning these stylesheets will generally not run correctly, unaltered, in an XSLT 1.0 environment, unless specifically marked as XSLT 1.0.
 
-The Saxon processor from Saxonica.com is the leading XSLT 3.0 processor and has been used for testing. Its open-source version is recommended. However, the XSLT code is conformant to standards and should also run in any (conformant) XSLT 3.0 engine.
+The Saxon processor from Saxonica.com is considered the benchmark XSLT 3.0 processor and has been used for testing. Its open-source version is recommended. However, the XSLT code intends conformance to standards and should also run in any (conformant) XSLT 3.0 engine.
 
 ### Java
 
 The Java applications we rely on here are SaxonHE (open source XSLT 3.0 engine from Saxonica) and Apache FOP. HTML can be produced using Saxon only. PDF requires the combination of Saxon and FOP.
 
 Since the HTML production does not require FOP, it can be achieved using an XSLT engine running on another platform, such as Saxon-C.
-
 
 #### Saxon
 
@@ -112,7 +121,7 @@ The flags here:
 
 #### Apache FOP
 
-For easy production of lightly-formatted PDF from HTML, we rely on the open-source Apache FOP processor. Again, this can be switched out: use a different XSL engine or an entirely different HTML-to-PDF pathway for your PDF production.
+For production of lightly-formatted PDF from HTML, we rely on the open-source Apache FOP processor. Again, this can be switched out: use a different XSL engine or an entirely different HTML-to-PDF pathway for your PDF production.
 
 The Apache Foundation has a 
 [Quick Start Guide](https://xmlgraphics.apache.org/fop/quickstartguide.html) for FOP.
@@ -130,17 +139,40 @@ FOP is also, however, available in other forms such as XProc engines (XML Calaba
   
 *Developers should also take note that the XSLT and XSL code in this repository is written to be standards-conformant, and should have no formal dependency on the tools described here. Any conformant XSLT or XSL-FO processors should be able to execute these transformations as coded - including other versions of Saxon, other current XSLT engines, and other formatting engines supporting XSL (FO). If your testing shows this not to be the case please let us know.*
 
-
 ## Applications
 
-In the initial release, we provide support for formatting OSCAL *catalog* documents only. In addition to resources that are published and maintained specifically as catalogs, this class of documents includes also *resolved OSCAL profiles*, inasmuch as the OSCAL profile format (such as the NIST HIGH Baseline) resolves into a nominal catalog (presenting a selection of controls from the base catalog).
+We currently provide stylesheets for formatting OSCAL *catalog* documents only. In addition to resources that are published and maintained specifically as catalogs, this also includes *resolved OSCAL profiles*, inasmuch as the OSCAL profile format (such as the NIST HIGH Baseline) resolves into a nominal catalog (presenting a selection of controls from the base catalog).
 
 Like most stylesheets designed for production, these do not produce runtime errors or warnings for bad inputs, instead working on the principle that all inputs however badly formed should be represented somehow. Nonetheless they have not been tested and cannot be expected to work consistently on input documents that are not formally valid to the OSCAL Catalog schema (XML version).
 
-In these instructions, we call the input document `home-catalog.xml`. It is presumed to be a valid OSCAL XML catalog document (referencing appropriate schemas). Adjust accordingly.
+For predictable results, be sure that inputs are valid OSCAL XML catalog documents (referencing appropriate schemas).
 
+### HTML production using XSLT in SaxonJS in nodeJS
 
-### HTML production
+Using SaxonJS and the XSLTs in this folder, HTML presentation versions of OSCAL Catalogs can be produced under nodeJS using the SaxonJS library. Use the command line syntax supported by the 
+SaxonJS processor.
+
+- https://www.npmjs.com/package/saxon-js (library)
+- https://www.npmjs.com/package/xslt3 (command-line interface)
+
+### HTML and PDF production using Maven
+
+Scripts are provided in this subdirectory that illustrate how Maven can be used to package Java libraries supporting a transformation runtime without any direct installation of Saxon, XML Calabash, FOP and their dependencies.
+
+- `mvn-make-catalog-html.sh` - syntax is `./mvn-make-catalog-html.sh inCatalog.xml outHTML.html`
+- `mvn-make-catalog-pdf.sh` - syntax is `./mvn-make-catalog-pdf.sh inCatalog.xml outPDF.pdf`
+
+Note: these installations can be touchy. Adapt as necessary. Pipelines invoked by either script can be provided with new or improved XSLT to give your data appropriate handling -- these examples are meant to serve as models, not to limit use in any way.
+
+At time of writing, the FOP processor produces long tracebacks. Silencing it requires some kind of FOP configuration setting from within Maven, or a small Java extension. Let us know of any easy solutions on offer.
+
+### PDF production using XProc 1.0 and XML Calabash
+
+The scripts configuring invocations of Maven can also be deconstructed into calls to XML Calabash directly under Java. Invoking FOP successfully using the XProc `xsl:formatter` step in XProc requires setting up XML Calabash with appropriate `jar` files on the classpath. See the [XML Calabash documentation](http://xmlcalabash.com/).
+
+### HTML production using XSLT
+
+Details here concern how to use these resources from the command line, but apply also when using them within a developer environment, CI/CD or other context.
 
 #### Generic preview
 
@@ -203,7 +235,7 @@ java -cp saxon-he-10.0.jar net.sf.saxon.Transform -t -s:latest-catalog.xml -xsl:
 
 Since this XSLT is a customization of the generic preview (HTML) XSLT, it accepts the same runtime parameters described above, either to "skin" the CSS or to suppress the Table of Contents.
 
-### PDF production
+### PDF production using XSLT and FOP
 
 PDF production is supported by an XSLT 3.0 transformation applied to the *HTML (either 'preview' or 'NIST emulation') produced in earlier steps*.
 
@@ -230,6 +262,10 @@ In this configuration, the first stage of the two-step process is embedded. In o
 The two transformations (producing HTML and FO format representations) can also be chained with the third (PDF production from FO format) for an end-to-end OSCAL-to-PDF pipeline.
 
 XML desktop applications, editors or IDEs may have support for XSL-FO based transformations (using FOP or a commercial engine) built in, along with features to support these configurations and others (for example, using them as libraries for other transformations).
+
+#### Errors in PDF production
+
+The FOP processor will not successfully conclude every run by producing a PDF output, even an 'incorrect' one; sometimes it will error out. It is however a design goal of these resources that they provide at least some results for any valid inputs. The developers would be interested to see any examples of valid OSCAL catalog inputs that do not complete successfully, under ordinary, duplicable configurations, using tools described here or other standards-conformant tools.
 
 ## Customization
 

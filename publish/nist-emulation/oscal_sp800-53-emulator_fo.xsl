@@ -8,17 +8,13 @@
   <xsl:param name="base-font-size" >10pt</xsl:param>
   
   <xsl:variable name="small"      >9pt</xsl:variable>
+  <xsl:variable name="inline-header-size">9pt</xsl:variable>
   <xsl:variable name="extra-small">7pt</xsl:variable>
   <xsl:variable name="smaller"    >80%</xsl:variable>
   <xsl:variable name="big"        >10pt</xsl:variable>
   <xsl:variable name="extra-big"  >14pt</xsl:variable>
   
-  <!--<xsl:variable name="body-font-family"  >'Calibri'</xsl:variable>
-  <xsl:variable name="header-font-family">'Calibri'</xsl:variable>
-  <xsl:variable name="frame-font-family" >'Calibri'</xsl:variable>
-  <xsl:variable name="label-font-family" >'Calibri'</xsl:variable>-->
-  
-<!-- YMMV: try with and without quotes -->
+  <!-- YMMV: try with and without quotes -->
   <xsl:param name="use-font" as="xs:string">Calibri, sans-serif</xsl:param>
   
   <xsl:variable name="body-font-family"    select="$use-font"/>
@@ -32,6 +28,16 @@
   <!--select="/*/body/section[contains-token(@class,'metadata')]/descendant::p[contains-token(@class,'label')][1]"-->
   
   <xsl:param name="start-pageno" as="xs:string">1</xsl:param>
+  
+  <xsl:import href="xhtml-tables-fo.xsl"/>
+  
+  
+  <!-- overriding import -->
+  <xsl:template match="table">
+      <fo:table xsl:use-attribute-sets="table">
+        <xsl:call-template name="process-table"/>
+      </fo:table>
+  </xsl:template>
   
   <xsl:template mode="get-metadata-value" match="p" priority="2">
     <xsl:apply-templates mode="#current"/>
@@ -67,10 +73,12 @@
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
               <dc:title>
-                <xsl:value-of select="/html/head/title"/>
+                <xsl:call-template name="doctitle-string"/>
               </dc:title>
-              <!--<dc:creator> XOXOXOXOX </dc:creator>
-              <dc:description>  XOXOXOXOX </dc:description>-->
+              <!-- Also permits other Dublin Core metadata viz. https://xmlgraphics.apache.org/fop/2.7/metadata.html -->
+              <!--
+                <dc:creator> XOXOXOXOX </dc:creator>
+                <dc:description>  XOXOXOXOX </dc:description> -->
             </rdf:Description>
           </rdf:RDF>
         </x:xmpmeta>
@@ -80,6 +88,11 @@
       <xsl:apply-templates select="/html/body"/>
     </fo:root>
   </xsl:template>
+  
+  <xsl:template name="doctitle-string">
+    <xsl:value-of select="/html/head/title"/>
+  </xsl:template>
+  
   
   <xsl:template match="body/main" mode="bookmarking">
     <fo:bookmark-tree>
@@ -111,7 +124,7 @@
   </xsl:template>
   
   <xsl:template match="span[@class='label']" mode="bookmarking">
-    <xsl:apply-templates/>
+    <xsl:apply-templates mode="#current"/>
     <xsl:text>: </xsl:text>
   </xsl:template>
   
@@ -224,7 +237,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="section[@class='ToC']">
+  <xsl:template match="section[@class=('ToC')]">
     <fo:page-sequence master-reference="simple" format="i" font-family="{ $frame-font-family }" initial-page-number="1" force-page-count="no-force">
       
       <fo:static-content flow-name="header">
@@ -253,33 +266,20 @@
     </fo:static-content>
   </xsl:template>
   
+  <!--<fo:static-content flow-name="footer" font-family="{ $frame-font-family }" text-align="center">
+    <xsl:call-template name="oscal-source-notice"/>
+    <fo:block space-before="1em">PAGE <fo:page-number/></fo:block>
+  </fo:static-content>
+  -->
+  
   <xsl:template match="section">
     <fo:page-sequence master-reference="simple" force-page-count="no-force"
       initial-page-number="{ if (exists(preceding-sibling::section|preceding-sibling::main)) then 'auto' else $start-pageno}">
-      
+      <xsl:copy-of select="@id"/>
       <fo:static-content flow-name="header" font-family="{ $frame-font-family }" >
         <xsl:apply-templates select="ancestor::body" mode="header-table"/>
       </fo:static-content>
-      <fo:static-content flow-name="footer" font-family="{ $frame-font-family }" >
-        <xsl:call-template name="footer-table">
-          <xsl:with-param name="left-side">
-            <xsl:if test="not(@id='references')">FAMILY: </xsl:if>
-            <fo:basic-link internal-destination="{ @id }"> 
-              <fo:retrieve-marker retrieve-class-name="family-abbr"/>
-            </fo:basic-link>
-          </xsl:with-param>
-          <xsl:with-param name="notice">
-            <xsl:call-template name="oscal-source-notice"/>
-          </xsl:with-param>
-          <xsl:with-param name="right-side">
-            <xsl:text>PAGE </xsl:text>
-            <fo:page-number/>
-          </xsl:with-param>
-          <!--<xsl:with-param name="notice">
-            <fo:block font-size="80%" font-style="italic" text-align="center">This document is produced from OSCAL source data</fo:block>
-          </xsl:with-param>-->
-        </xsl:call-template>
-      </fo:static-content>
+      <xsl:apply-templates select="." mode="footer"/>
       <xsl:call-template name="page-left-column"/>
       <fo:static-content flow-name="xsl-footnote-separator">
         <fo:block end-indent="4in" margin-top="12pt" margin-bottom="8pt" border-width="0.5pt"
@@ -295,6 +295,32 @@
         </fo:block>
       </fo:flow>
     </fo:page-sequence>
+  </xsl:template>
+
+  <xsl:template match="section//section" priority="101">
+    <fo:block-container>
+      <xsl:copy-of select="@id"/>
+      <xsl:apply-templates/>
+    </fo:block-container>
+  </xsl:template>
+  
+
+  <xsl:template match="section" mode="footer">
+    <xsl:call-template name="grid-footer">
+      <xsl:with-param name="left-side">
+        <xsl:if test="not(@id = 'references')">FAMILY: </xsl:if>
+        <fo:basic-link internal-destination="{ @id }">
+          <fo:retrieve-marker retrieve-class-name="family-abbr"/>
+        </fo:basic-link>
+      </xsl:with-param>
+      <xsl:with-param name="notice">
+        <xsl:call-template name="oscal-source-notice"/>
+      </xsl:with-param>
+      <xsl:with-param name="right-side">
+        <xsl:text>PAGE </xsl:text>
+        <fo:page-number/>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="body" mode="header-table">
@@ -323,10 +349,12 @@
     </fo:table>
   </xsl:template>
   
-  <xsl:template name="footer-table">
+  <xsl:template name="grid-footer">
     <xsl:param name="left-side"/>
     <xsl:param name="notice"/>
     <xsl:param name="right-side"/>
+    <fo:static-content flow-name="footer" font-family="{ $frame-font-family }" >
+      
     <fo:table font-size="8pt" font-family="{ $frame-font-family }">
       <fo:table-body>
         <xsl:if test="matches($notice,'\S')">
@@ -350,6 +378,7 @@
         </fo:table-row>
       </fo:table-body>
     </fo:table>
+    </fo:static-content>
   </xsl:template>
   
   <xsl:template match="details[@class='ToC']/summary[@class='toc-listing']">
@@ -461,12 +490,14 @@
   <!--special handling for control enhancements (nested controls)-->
   <xsl:template priority="5" match="div[contains-token(@class,'control')]//div[contains-token(@class,'control')]//summary[contains-token(@class,'h3')]">
     <fo:block font-family="{ $display-font-family }" keep-with-next="always" text-transform="uppercase" font-size="{ $big }">
+      <xsl:copy-of select="@id"/>
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
   
   <xsl:template priority="5" match="div[contains-token(@class,'control')]//div[contains-token(@class,'control')]//div[contains-token(@class,'statement')]">
     <fo:block font-weight="bold" keep-with-next="always">
+      <xsl:copy-of select="@id"/>
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -474,6 +505,7 @@
   <xsl:template priority="5" match="section[@class='group']/details/div[contains-token(@class,'overview')]">
     <fo:block border-style="solid" border-width="1pt" border-color="black"
       margin="2em" padding="2em" space-before="2em" background-color="#c6d9f1">
+      <xsl:copy-of select="@id"/>
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -487,12 +519,21 @@
   <!-- Removing the annotation -->
   <xsl:template match="section/details/summary/small"/>
   
+  <xsl:template match="div[contains-token(@class,'guidance')]//summary[contains-token(@class,'h4')]" priority="15"/>
+    
 
-  <xsl:template match="summary[contains-token(@class,'h4')]" priority="2"/>
+  <!--<xsl:template match="summary[contains-token(@class,'h4')]" priority="2">
+    <xsl:message expand-text="true">firing { local-name() }: { . }</xsl:message>
+    <fo:block>
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>-->
   
-  <xsl:template priority="5" match="details[contains-token(@class,'none')]/summary[contains-token(@class,'h4')] |
+  
+  <xsl:template priority="5" match="details/summary[contains-token(@class,'h4')] |
     details[table/@class='objective-table']/summary">
-    <fo:block space-before="0.5em" keep-with-next="always" text-decoration="underline">
+    <!--<xsl:message expand-text="true">firing { local-name() }: { . }</xsl:message>-->
+    <fo:block space-before="0.5em" keep-with-next="always">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -501,10 +542,10 @@
     <fo:block space-before="0.5em" id="{@id}">
       <xsl:for-each select="details/summary">
         <fo:inline font-family="{ $label-font-family }" text-decoration="underline"
-          font-size="{ $small }">
+          font-size="{ $inline-header-size }">
           <xsl:apply-templates/>
         </fo:inline>
-        <fo:inline font-family="{ $label-font-family }" font-size="{ $small }">
+        <fo:inline font-family="{ $label-font-family }" font-size="{ $inline-header-size }">
           <xsl:text> (select from): </xsl:text>
         </fo:inline>
       </xsl:for-each>
@@ -527,14 +568,14 @@
   </xsl:template>
   
   <xsl:template match="p[@class='withdrawn-status']">
-    <fo:block space-before="0.5em" font-size="{ $small }">
+    <fo:block space-before="0.5em" font-size="{ $inline-header-size }">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
   
   <xsl:template match="span[@class='inline-head']">
     <fo:inline font-family="{ $label-font-family }" text-decoration="underline"
-      font-size="{ $small }">
+      font-size="{ $inline-header-size }">
       <xsl:apply-templates/>
     </fo:inline>
     <xsl:if test="not(starts-with(following-sibling::text()[1],':'))">: </xsl:if>
@@ -563,7 +604,7 @@
     <fo:block space-before="0.5em">
       <xsl:for-each select="../summary">
         <fo:inline font-family="{ $label-font-family }" text-decoration="underline"
-          font-size="{ $small }">
+          font-size="{ $inline-header-size }">
           <xsl:apply-templates/>
         </fo:inline>
         <xsl:text>: </xsl:text>
@@ -589,7 +630,7 @@
   <xsl:template priority="5" match="details[contains-token(@class,'enhancements')][not(contains-token(@class,'none'))]">
     <fo:block space-before="0.5em" keep-with-next="always">
       <fo:inline font-family="{ $label-font-family }" text-decoration="underline"
-        font-size="{ $small }">Control Enhancements</fo:inline>
+        font-size="{ $inline-header-size }">Control Enhancements</fo:inline>
         <xsl:text>: </xsl:text>
     </fo:block>
     <xsl:apply-templates/>
@@ -620,19 +661,30 @@
                   <xsl:value-of select="replace(details/summary/span[1],'^[^\(]+','')"/>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:value-of select="details/summary/span[1]"/>
+                  <xsl:value-of select="details/summary/span[@class='label']"/>
                 </xsl:otherwise>
               </xsl:choose>
             </fo:block>
           </fo:list-item-label>
           <fo:list-item-body start-indent="body-start()">
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="." mode="control-contents"/>
           </fo:list-item-body>
         </fo:list-item>
       </fo:list-block>
     </fo:block>
   </xsl:template>
+
+  <xsl:template priority="5" mode="control-contents" match="div[contains-token(@class,'control')]">
+    <xsl:apply-templates/>
+  </xsl:template>
   
+<!--
+  <xsl:template priority="50" mode="control-contents" match="div[contains-token(@class,'control')]//div[contains-token(@class,'control')]">
+    <xsl:apply-templates/>
+    
+  </xsl:template>-->
+  
+
   <xsl:template match="div[contains-token(@class,'control')]/details/summary/span" priority="2"/>
   
   <xsl:template match="div[contains-token(@class,'prop')]">
@@ -667,7 +719,7 @@
   <xsl:template match="table[@class=($outline-grid-classes,$resource-grid-classes,$assessment-grid-classes)]">
     <fo:list-block provisional-distance-between-starts="2em"
       provisional-label-separation="1em"  space-before="0.5em">
-      <xsl:copy-of select="@id"/>
+      <xsl:copy-of select="parent::*/@id"/>
       <xsl:apply-templates/>
     </fo:list-block>
   </xsl:template>
@@ -793,6 +845,12 @@
   
   <xsl:template match="span[contains-token(@class,'label')]">
     <fo:inline font-style="{ $label-font-family }">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  
+  <xsl:template match="span[contains-token(@class,'smallcaps')]">
+    <fo:inline font-size="{ $inline-header-size }" text-transform="uppercase" font-variant="small-caps">
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
