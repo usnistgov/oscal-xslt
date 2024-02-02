@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title id="html-title">OSCAL Component Definition Bento Box View</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="../nist-emulation.css" />
+        <style type="text/css" xml:space="preserve">
+
+/* / https://designsystem.digital.gov/design-tokens/color/system-tokens/ */
+
+main > section { outline: medium solid black; padding: 1em; margin-top: 1em }
+
+main > section > details > summary { font-size: 140% }
+
+.frm   { font-family: Calibri, Arial, sans-serif }
+
+p { margin: 0.5em 0em }
+
+span.lbl { display: inline-block; padding: 0.2em; border: thin solid darkgrey }
+.lbl { background-color: gainsboro; color: black; padding: 0.2em; width: max-content }
+
+.hako1 { display: flex; 
+  flex-wrap: wrap; justify-content: flex-start; 
+  align-items: stretch; gap: 0.6em; 
+  padding-top: 0.5em; }
+  
+.hako1 > * { max-width: max-content; border: medium solid lightgrey; padding: 0.6em; margin: 0em; height: min-content  }
+
+.hako1.protocols > * { border: medium groove grey }
+
+.implemented-requirement { border: medium solid blue; background-color: skyblue; }
+ 
+.statement { border: medium solid gold; background-color: cornsilk  }
+        
+.by-component { border: medium solid forestgreen; background-color: mintcream; } 
+
+.set-parameter { border: medium solid midnightblue; background-color: lightsteelblue; } 
+
+div.remarks { margin-top: 0.4em; padding: 0.5em; outline: thin solid black; background-color: gainsboro }
+div.remarks * { margin: 0em }
+
+div.description { margin-top: 0.4em; padding: 0.5em; outline: thin solid black; background-color: whitesmoke }
+div.description * { margin: 0em }
+
+details.prop, p.prop { margin-top: 0.4em; padding: 0.5em; outline: thin solid black; background-color: whitesmoke; max-width: fit-content }
+
+div.box { padding: 0.4em; border: thin solid black; margin: 0.5em 0em }
+
+div.description, div.remarks  {
+  max-width: 40em }
+
+.box > *:first-child { margin-top: 0em }
+.box > *:last-child { margin-bottom: 0em }
+
+p.lbl { margin: 0em }
+p.lbl + p { margin:0em }
+
+.pln { font-weight: normal; font-style: normal }
+
+span.linktext { font-weight: bold }
+
+.prop div.remarks { margin-left: 2em; font-size: 90% }
+.status div.remarks { margin-left: 2em; font-size: 90% }
+
+.val { display: inline-block; width: max-content;
+  padding: 0.2em; background-color: white; border: thin solid black;
+  font-family: Consolas, monospace; font-weight: 300 }
+  
+</style>
+        <script type="text/javascript" src="../lib/Saxon-JS-2.2/SaxonJS2.js">
+        </script>
+        <script xml:space="preserve">
+
+function loadOSCAL(fileSet) {
+  for (const eachFile of fileSet) {
+    let frdr = new FileReader();
+    frdr.onload = function () {
+      SaxonJS.transform({
+        sourceText: frdr.result,
+        stylesheetLocation: "componentdef.sef.json",
+        initialTemplate: "componentdef-bento",
+        stylesheetParams: {
+          "fileName": eachFile.name
+        }
+      },"async")
+    }
+    frdr.readAsText(eachFile);
+  }
+}
+
+        </script>
+
+    </head>
+    <body>
+        <div id="bxheader">
+          <h3 id="page-title" onclick="void(0)">OSCAL Component Definition <q>Bento Box</q> Preview</h3>
+          <p>Load your OSCAL component defition(s) here for preview... <input
+                type="file" accept=".xml,text/xml"
+                id="loadfileInput" name="loadfileInput" title="Drop XML"
+                onchange="loadOSCAL(this.files)" /></p>
+        </div>
+      <main id="ssp-body">
+            <!--<p>body</p>-->
+        </main>
+        <div id="bxfooter">
+            <p>The <q>bento box</q> is an <a href="https://pages.nist.gov/OSCAL/">OSCAL</a> demonstration. Use with appropriate caution as disclaimers apply.</p>
+            <p>Data processing on this page runs entirely in your browser, under <a href="https://www.saxonica.com/saxon-js/index.xml">SaxonJS</a>. No data is transferred to any other party, monitored or analyzed in any way other than what is displayed.</p>
+        </div>
+    </body>
+</html>
