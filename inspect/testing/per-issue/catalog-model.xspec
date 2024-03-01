@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../../testing/xspec-assurance.sch"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:mx="http://csrc.nist.gov/ns/csd/metaschema-xslt"
+    stylesheet="../../current/computer_metaschema-inspector.xsl"
+    xmlns="http://example.com/ns/computer"
+    xmlns:c="http://example.com/ns/computer"
+    xslt-version="3.0">
+
+    <!-- COME BACK TO / HELP WANTED
+    See STRESS TESTING below
+    Test cardinality, order and 'choice' more systematically and comprehensively
+    Unit tests for post-processing modes - MX, HTML and Markdown production?
+    -->
+    
+  
+   <!--
+     
+  STRESS TESTING -
+    markup-line and markup-multiline fields
+    edge cases with @in-xml 'unwrapped' etc.
+    survey Metaschema and OSCAL for interesting cases
+  -->
+  
+<!--
+
+
+   -->
+   
+    <!-- TEST apply-validator.xsl as a 'null schema' validator -->
+    <!-- more modes? - concise, grouped, summary-only, silent-if-valid?  -->
+    <!-- XXX then: implementing the constraints checking!  -->
+    
+   <!-- to assess coverage wrt current/computer_inspector.xsl:
+          /descendant::XSLT:call-template[@name='notice']   -->
+   
+    <x:scenario label="[A] 'EOOP element-out-of-place' notices">
+        <x:scenario label="[A.1] For a known but incorrect element at the root (document level)">
+            <x:context mode="test" select="/c:motherboard">
+                <motherboard/>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="exists(.)" xpath="/motherboard" class="EOOP element-out-of-place" level="ERROR">Element <mx:gi>motherboard</mx:gi> is not permitted here.</mx:report>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="[A.2] For an element with a known name, but out of place">
+            <x:context mode="test" select="/c:computer/c:computer">
+                <computer id="A0">
+                    <computer/>
+                </computer>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="exists(.)" xpath="/computer/computer" class="EOOP element-out-of-place" level="ERROR">Element <mx:gi>computer</mx:gi> is not permitted here.</mx:report>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+    
+    <x:scenario label="[B] 'AOOP attribute-out-of-place' notices">
+        <x:scenario label="[B.1] For an attribute with a known name, but out of place">
+            <x:context mode="test" select="/c:computer">
+                <computer illuminated="true" id="A0">
+                   <prop name="model">CompuTek I</prop>
+                </computer>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="exists(.)"
+                    xpath="/computer/@illuminated" class="AOOP attribute-out-of-place" level="ERROR">Attribute <mx:gi>@illuminated</mx:gi> is not permitted here.</mx:report>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+    
+    <x:scenario label="[C] 'VDSX violates-datatype-syntax' notices">
+        <x:context mode="test" select="/c:computer/c:motherboard/c:cooling/c:water/@illuminated">
+            <computer id="A0">
+                <motherboard>
+                    <cooling>
+                        <water illuminated="truE"/>
+                    </cooling>
+                </motherboard>
+            </computer>
+        </x:context>
+        <x:expect label="an error is reported">
+           <mx:report cf="..." test="not(string(.) castable as xs:boolean and matches(.,'^true|1|false|0$'))"
+              class="VDSX violates-datatype-syntax"
+              xpath="/computer/motherboard/cooling/water/@illuminated" level="ERROR">Value <mx:code>truE</mx:code> of attribute <mx:gi>@illuminated</mx:gi> does not conform to <mx:code>boolean</mx:code> datatype.</mx:report>
+        </x:expect>
+    </x:scenario>
+    
+    <x:scenario label="[D] 'EATI element-appears-too-infrequently' notices">
+        <x:context mode="test" select="/c:computer/c:motherboard/c:cooling/c:fan">
+            <computer id="A0">
+                <motherboard>
+                    <cooling>
+                        <fan/>
+                    </cooling>
+                </motherboard>
+            </computer>
+        </x:context>
+        <x:expect label="an error is reported">
+            <mx:report cf="..."
+                test="empty(following-sibling::fan) and (count(. | preceding-sibling::fan) lt 2)"
+                xpath="/computer/motherboard/cooling/fan" class="EATI element-appears-too-infrequently" level="ERROR">Element <mx:gi>fan</mx:gi> appears too few times: 2 minimum are required.</mx:report>
+        </x:expect>
+    </x:scenario>
+    
+    <x:scenario label="[E] 'EATO element-appears-too-often' notices">
+        <x:scenario label="[E.1] For an element appearing too many times">
+            <x:context mode="test" select="/c:computer/c:motherboard/c:type[2]">
+                <computer id="A0">
+                    <motherboard>
+                       <type>atx</type>
+                       <type>mini-itx</type>
+                    </motherboard>
+                </computer>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="count(. | preceding-sibling::type) gt 1" xpath="/computer/motherboard/type[2]"
+                   class="EATO element-appears-too-often" level="ERROR">Element <mx:gi>type</mx:gi> appears too many times: 1 maximum is permitted.</mx:report>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+    
+    <x:scenario label="[F] 'VEXC violates-exclusive-choice' notices">
+        <!-- TODO: implement sth with 'choice'       -->
+        <!-- /descendant::XSLT:call-template[@name='notice'][6]       -->
+        <x:context mode="test" select="/c:computer/c:motherboard/c:cooling/c:fan[1]">
+            <computer id="A0">
+                <motherboard>
+                    <cooling>
+                        <fan/>
+                        <fan/>
+                        <water/>
+                    </cooling>
+                </motherboard>
+            </computer>
+        </x:context>
+        <x:expect label="an error is reported">
+            <mx:report cf="..." test="empty(preceding-sibling::fan) and exists(../(water))" xpath="/computer/motherboard/cooling/fan[1]"
+               class="VEXC violates-exclusive-choice" level="ERROR">Element <mx:gi>fan</mx:gi> is unexpected along with <mx:gi>water</mx:gi>.</mx:report>
+        </x:expect>
+    </x:scenario>
+    
+   <x:scenario label="[G] 'EOOO element-out-of-order' notices">
+      <!-- /descendant::XSLT:call-template[@name='notice'][7]       -->
+      <x:scenario label="[G.1] An element appearing after an optional successor">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <cooling/>
+                  <type>mini-itx</type>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="an error is reported">
+            <mx:report cf="..." test="exists(preceding-sibling::cpu | preceding-sibling::ata-socket | preceding-sibling::memory | preceding-sibling::cooling | preceding-sibling::expansion-card)"
+               xpath="/computer/motherboard/type" class="EOOO element-out-of-order" level="ERROR">Element <mx:gi>type</mx:gi> is unexpected following <mx:gi>cpu</mx:gi>, <mx:gi>ata-socket</mx:gi>, <mx:gi>memory</mx:gi>, <mx:gi>cooling</mx:gi>, or <mx:gi>expansion-card</mx:gi>.</mx:report>
+         </x:expect>
+      </x:scenario>
+      
+   </x:scenario>
+   
+   <x:scenario label="[H] 'AVCV value-not-allowed' notices">
+      <!-- /descendant::XSLT:call-template[@name='notice'][7]       -->
+      <x:scenario label="[H.1] A field with a value out of compliance with its enumeration - literally wrong">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <type>special</type>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="an error is reported">
+            <mx:report cf="..." test="not(.=('at','atx','mini-itx'))" class="AVCV value-not-allowed"
+               matching="computer/motherboard/type" xpath="/computer/motherboard/type"
+               level="WARNING">Value <mx:code>special</mx:code> does not appear among permissible (enumerated) values for this <mx:gi>type</mx:gi>: <mx:code>at|atx|mini-itx</mx:code>.</mx:report>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[H.2] An empty field whose value must be enumerated">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <type/>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="an error is reported, showing the empty string as '(empty)', along with another error based on a data typing constraint">
+            <mx:report cf="..." test="not(string(.) castable as xs:string and matches(.,'^\S(.*\S)?$'))"
+               class="VDSX violates-datatype-syntax" xpath="/computer/motherboard/type"
+               level="ERROR">Value <mx:code /> of element <mx:gi>type</mx:gi> does not conform to <mx:code>string</mx:code> datatype.</mx:report>
+            <mx:report cf="..." test="not(.=('at','atx','mini-itx'))" class="AVCV value-not-allowed" matching="computer/motherboard/type"
+               xpath="/computer/motherboard/type" level="WARNING">Value <mx:code/> (empty) does not appear among permissible (enumerated) values for this <mx:gi>type</mx:gi>: <mx:code>at|atx|mini-itx</mx:code>.</mx:report>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[H.3] A field with a value out of compliance with its enumeration - wrong CASE, so literally wrong">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <type>CUSTOM</type>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="an error is reported">
+            <mx:report cf="..." test="not(.=('at','atx','mini-itx'))" class="AVCV value-not-allowed" matching="computer/motherboard/type"
+               xpath="/computer/motherboard/type" level="WARNING">Value <mx:code>CUSTOM</mx:code> does not appear among permissible (enumerated) values for this <mx:gi>type</mx:gi>: <mx:code>at|atx|mini-itx</mx:code>.</mx:report>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[H.4] A field with a value out of compliance with its enumeration - extra whitespace">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <type>mini - itx</type>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="an error is reported">
+            <mx:report cf="..." test="not(.=('at','atx','mini-itx'))" class="AVCV value-not-allowed" 
+               matching="computer/motherboard/type" xpath="/computer/motherboard/type"
+               level="WARNING">Value <mx:code>mini - itx</mx:code> does not appear among permissible (enumerated) values for this <mx:gi>type</mx:gi>: <mx:code>at|atx|mini-itx</mx:code>.</mx:report>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[H.5] A field with a value in compliance with its enumeration">
+         <x:context mode="test" select="/c:computer/c:motherboard/c:type">
+            <computer id="A0">
+               <motherboard>
+                  <type>mini-itx</type>
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="throws no error" select="()"/>
+      </x:scenario>
+   </x:scenario>
+   
+   <!-- testing target="." constraints allowed-values, matches/@regex, matches/@datatype -->
+   
+    <x:scenario label="[I] 'MRQC missing-required-contents' notices">
+        <!-- /descendant::XSLT:call-template[@name='notice'][8]       -->
+        <!-- TODO: add some more here -->
+        <x:context mode="test" select="/c:computer/c:motherboard/c:cooling">
+            <computer id="A0">
+                <motherboard>
+                    <cooling/><!-- contains choice of (required) 'fan' or 'water' -->
+                </motherboard>
+            </computer>
+        </x:context>
+        <x:expect label="an error is reported">
+            <mx:report  cf="..." test="empty(fan|water)" xpath="/computer/motherboard/cooling" class="MRQC missing-required-contents"
+               level="ERROR">Element <mx:gi>cooling</mx:gi> requires element <mx:gi>fan|water</mx:gi>.</mx:report>
+        </x:expect>
+    </x:scenario>
+    
+    <x:scenario label="[J] 'MRQA missing-required-attribute' notices">
+        <x:scenario label="[J.1] For an attribute required but missing">
+            <x:context mode="test" select="/c:computer">
+               <computer>
+                  <prop name="model">CompuTek I</prop>
+               </computer>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="empty(@id)"
+                    xpath="/computer" class="MRQA missing-required-attribute" level="ERROR">Element <mx:gi>computer</mx:gi> requires attribute <mx:gi>@id</mx:gi>.</mx:report>
+            </x:expect>
+        </x:scenario>
+        <!-- /descendant::XSLT:call-template[@name='notice'][9]       -->
+    </x:scenario>
+    
+    <x:scenario label="[K] 'UE unmatched-element' notices">
+        <x:scenario label="[K.1] For an unknown element at the root (document level)">
+            <x:context mode="test" select="/c:motherboid">
+                <motherboid/>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." class="_UE unmatched-element" level="ERROR"
+                    test="exists(.)"
+                    xpath="/motherboid">Unrecognized element <mx:gi>motherboid</mx:gi>.</mx:report>
+            </x:expect>
+        </x:scenario>
+        
+    </x:scenario>   
+
+    <x:scenario label="[L] 'UA unmatched-attribute' notices">
+        <x:scenario label="[L.1] For an unknown attribute">
+            <x:context mode="test" select="/c:computer">
+                <computer id="A0" networkID="hal">
+                   <prop name="model">CompuTek I</prop>
+                </computer>
+            </x:context>
+            <x:expect label="an error is reported">
+                <mx:report cf="..." test="exists(.)" xpath="/computer/@networkID" class="_UA unmatched-attribute"
+                   level="ERROR">Unrecognized attribute <mx:gi>@networkID</mx:gi> on element <mx:gi>computer</mx:gi>.</mx:report>
+            </x:expect>
+        </x:scenario>
+        <!-- /descendant::XSLT:call-template[@name='notice'][2]       -->
+    </x:scenario>
+    
+    <x:scenario label="[M] Mixed content">
+       <x:scenario label="[M.1] Some okay mixed content">
+          <x:context mode="validate" select="/c:computer/c:prop"><!-- selecting the prop in mode 'validate' to copy it -->
+            <computer>
+               <prop name="model" value="PC1">
+                  <remarks>
+                     <p>Here is some good <b>bold</b> stuff.</p>
+                  </remarks>
+               </prop>
+            </computer>
+          </x:context>
+          <x:expect label="copies through unmessed-with">
+                <prop name="model" value="PC1">
+                   <remarks>
+                      <p>Here is some good <b>bold</b> stuff.</p>
+                   </remarks>
+                </prop>
+          </x:expect>
+       </x:scenario>
+       
+<!-- some broken mixed content
+          p-level
+            unexpected element 'boo' (unknown)
+            unexpected element 'memory' (permitted elsewhere)
+            unexpected element 'remarks/i'
+            misplaced text (between p-levels)
+          inline
+            unexpected element 'p/p' or 'i/p' (mixed up mixed content)
+          -->
+       
+<!--some mixed content appearing where it shouldn't
+       broken
+       correct but misplaced -->
+    </x:scenario>
+    
+</x:description>
