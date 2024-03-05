@@ -42,3 +42,13 @@ Compiling the XSLT into SEF requires Saxon, either licensed SaxonJ (Java, versio
 For NodeJS, install [SaxonJS](https://www.npmjs.com/package/saxon-js) and [xslt3](https://www.npmjs.com/package/xslt3) via NPM.
 
 Scripts or documents per project will commonly capture command-line configurations and options.
+
+### Ideas
+
+As InspectorXSLT is the motivator for this effort, providing it with an active client-side implementation is the priority.
+
+Other possibilities:
+
+- Browser-based OSCAL generator makes blanks? uses code from ../generate
+- OSCAL 'date-now' stamper - used to update UUID and timestamp on OSCAL or other XML?
+- OSCAL HTML display

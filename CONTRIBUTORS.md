@@ -1,6 +1,6 @@
 # Contributing to oscal-xslt
 
-This project is a spinoff of a spinoff ([OSCAL Tools](http://pages.nist.gov/oscal-tools)). It currently represents work in progress and work always-in-progress. All code is being placed in the public domain in order to make it free to use.
+This project began as a spinoff of a spinoff ([OSCAL Tools](http://pages.nist.gov/oscal-tools)). It currently represents work in progress and work always-in-progress. All code is being placed in the public domain in order to make it free to use.
 
 Note that in view of the possibility that it may receive public contributions, and in the hope and expectation that users and contributors all find themselves to be welcome to participate in its development, this site also has a [Code of Conduct](CODE_OF_CONDUCT.md).
 

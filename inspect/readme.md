@@ -2,6 +2,43 @@
 
 This is an implementation of the (XSLT Inspector)[] Metaschema-based XML validator.
 
+## Testing
+
+Testing is described in [testing.md](testing.md).
+
+## XSLT architecture
+
+While relying on a library to produce an InspectorXSLT from OSCAL Metaschema source, the XSLT so produced is a standalone artifact that can be applied to any OSCAL (or any XML) indiscriminately, to produce meaningful results.
+
+This single file will typically be named after the model whose rules it validates, e.g. `oscal-catalog-inspector.xsl` for an XSLT that assesses XML according to the rules of the [OSCAL Catalog metaschema](https://pages.nist.gov/OSCAL-Reference/models/develop/catalog/).
+
+### InspectorXSLT production
+
+Run a script to update InspectorXSLT for any supported OSCAL model. Currently the Catalog model is supported.
+
+```bash
+> ./refresh-inspector.sh catalog
+```
+
+The script executes a Java process, requiring Maven, a JDK and (to initiate it) `bash`.
+
+Internal dependencies on Saxon, XML Calabash (XProc engine) and other libraries is managed by Maven.
+
+The script produces an XSLT file as output, a standalone InspectorXSLT for the metaschema module designated.
+
+As such, this XSLT can be applied to any XML document to determine validity against the metaschema's rule set, using a standard XSLT 3.0 engine (Saxon is recommended).
+
+### Browser deployment
+
+One of the uses of the InspectorXSLT application is browser deployment.
+
+See the Pages site for this repository to see a prototype demonstration, delivering logic produced using the utility here for use in a browser. The site is maintained in the `pub` directory of this repository, with the application in folder [pub/InspectorXSLT](../pub/InspectorXSLT/).
+
+This is accomplished by means of an "outfitter" XSLT that imports the Inspector XSLT and uses its templates. This configuration, integration and interfacing XSLT is then compiled for use by the SaxonJS Node JS application framework into a static object for delivery over the web.
+
+Consequently any web page 
+
+
 ## Punchlist
 
 1. XProc to produce an InspectorXSLT (XSLT stylesheet) from a designated metaschema source.

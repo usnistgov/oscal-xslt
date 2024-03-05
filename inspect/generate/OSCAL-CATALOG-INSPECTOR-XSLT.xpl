@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc" xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
-   xmlns:metaschema="http://csrc.nist.gov/ns/metaschema/1.0" type="metaschema:OSCAL-INSPECTOR-XSLT"
-   name="OSCAL-INSPECTOR-XSLT">
+   xmlns:metaschema="http://csrc.nist.gov/ns/metaschema/1.0" type="metaschema:OSCAL-CATALOG-INSPECTOR-XSLT"
+   name="OSCAL-CATALOG-INSPECTOR-XSLT">
 
    <!-- Purpose: Produces an Inspector XSLT for the OSCAL Catalog metaschema  -->
    <!-- Input: is hard-wired to a current copy of the metaschema on Github -->
@@ -59,7 +59,7 @@
       </p:input>
    </p:xslt>
 
-   <p:store href="current/oscal-catalog_inspector.xsl" indent="true" method="xml"
+   <p:store href="../oscal-catalog_inspector.xsl" indent="true" method="xml"
       encoding="us-ascii"/>
 
 </p:declare-step>

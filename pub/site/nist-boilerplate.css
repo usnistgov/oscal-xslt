@@ -1,0 +1,37 @@
+/*  globals */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+main.draft, body.draft main { background-image: url( 'draft.svg' ) }
+
+section.project { background-image: none; background-color: white; }
+
+.project-footer { background-color: gainsboro; text-align: center;
+  padding: 0.3em; margin: 0; border: none }
+
+html, body { font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+  
+}
+
+main { padding: 1em 16px } /* same horizontal space as NIST header */
+main > *:first-child { margin-top: 0em }
+
+/* relative position keeps the footer block behind the leaving-site popup */
+#nistfootergoeshere { z-index: -1; position: relative }
+
+.boxed { width: fit-content; padding: 0.4em;
+    margin: 0.25em 0em}
+
+details.boxed[open] { outline: thin dotted black }
+
+details.boxed > *:last-child { margin-bottom: 0em }
+
+details#sec-notice { margin: 0em; padding: 0.2em;
+  text-align: right; font-size: smaller; background-color: lightgrey  }
+
+#sec-notice p { margin: 0em; max-width: inherit }
+#sec-notice p span:before { content: '• '  } /* bullet */
+#sec-notice p span:hover { background-color: gainsboro  }
+
+#sec-notice a { color: inherit; text-decoration: inherit }
+#sec-notice a:hover { text-decoration: underline; }
