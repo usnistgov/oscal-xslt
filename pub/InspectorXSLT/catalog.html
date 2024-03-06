@@ -1,126 +1,52 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>OSCAL Catalog Validator: An OSCAL analysis tool</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="../nist-emulation.css" />
-        <style type="text/css" xml:space="preserve">
-html, body { background-color: lemonchiffon }
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>OSCAL Catalog Inspector XSLT</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../site/nist-boilerplate.css" type="text/css" />
+    <link rel="stylesheet" href="../site/nist-combined.css" type="text/css" />
 
-#overview { border: thin inset grey; padding: 0.5em; margin: 0em 0.5em }
-
-a { color: inherit; text-decoration: none }
-a:hover { text-decoration: underline }
-
-section.examination { display: grid; grid-template-columns: 1fr auto; grid-gap: 1em }
-
-section.notifications > section { margin-top: 1em; padding: 0.5em; border: thin dotted black }
-section.notifications > section > *:first-child { margin-top: 0em }
-
-section.map p { margin: 0em }
-section.map div div.element { margin-left: 1em; margin-top: 0.2em }
-section.map p.tag { display: inline-block; background-color: midnightblue; color: aliceblue; padding: 0.2em }
-section.map p.tag.ON {  background-color: deepskyblue }
-p.tag span.flag { display: inline-block; background-color: aliceblue; color: black; padding: 0.1em; margin-left: 0.5em }
-
-.xml-source { border: thin solid black; padding: 0.5em; margin: 0.5em; }
-
-code { background-color: gainsboro; font-family: monospace; font-weight: bold }
-
-
-section.validation { border-top: thin solid black; margin-top: 1em }
-
-
-div.report { display: grid; grid-template-columns: 1fr 2fr 1fr;
-background-color: aliceblue; border: thin solid black; padding: 0.4em; margin-top: 1em }
-div.report > * { margin: 0em; padding: 0.2em }
-div.report .title  { grid-column: 1; font-weight: normal }
-div.report .msg  { grid-column: 2 }
-div.report .path { grid-column: 3 }
-
-div.control-list { display: grid; grid-template-columns: auto auto }
-div.control-list > * { margin: 0em; padding: 0.2em }
-
-.msg          { background-color: lightgreen; border: thin solid green }
-.problematic  { background-color: pink;       border: thin solid red }
-.remarkable   { background-color: yellow;     border: thin solid orange }
-.path         { font-family: monospace; padding-left: 0.2em }
-
-.xpath { font-family: monospace; font-size: 95%; background-color: white }
-
-code.ctrl { background-color: white; padding: 0.1em; display: inline-block; border: thin outset black }
-      
-.outline { display: flex; flex-flow: row; margin-top: 0em }
-.outline div { flex-grow: 0; margin: 0.1rem  }
-.outline div:first-child { margin-top: 0rem  }
-.outline div:last-child  { margin-bottom: 0rem  }
-
-.oll { font-size: 80%; background-color: gold; padding: 0.2em }
-
-.outline div.olt { border: thin solid cadetblue; background-color: ivory;
-     padding: 0.1rem; font-size: 60%; font-family: "Open Sans", sans-serif }
-
-
-     </style>
-        <script type="text/javascript" src="../lib/Saxon-JS-2.2/SaxonJS2.js"> </script>
-        <script xml:space="preserve">
-
-    function validateFiles(fileSet) {
-      for (const eachFile of fileSet) {
-        let frdr = new FileReader();
-        frdr.onload = function () {
-          SaxonJS.transform({
-            sourceText: frdr.result,
-            stylesheetLocation: "apply-validator.sef.json",
-            initialTemplate: "validate-catalog",
-            stylesheetParams: {
-              "fileName": eachFile.name
-            }
-          },"async")
-        }
-        frdr.readAsText(eachFile);
-      }
-    }
-    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <!-- Remove the nist-header-footer.js script to drop the NIST header and footer  -->
+    <script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+    <!-- https://github.com/usnistgov/pages-root/wiki/Adding-NIST-required-branding-and-features-to-your-site -->
+    <!-- Google analytics    -->
+    <script async="async" type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST%26subagency=github%26pua=UA-66610693-1%26yt=true%26exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
 </script>
+    <script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+  </head>
+  <!-- templating help at https://pages.nist.gov/nist-header-footer/ -->
+  <body class="draft">
+    <div style="display: none" class="teaser">An OSCAL XML Validator, running in the browser.</div>
+    <details id="sec-notice">
+    <summary>Is this site a preview, mockup or spoof? - <i><b>How you can know</b></i></summary>
+    <p><span>The real site domain ends in <code>nist.gov</code></span>&#xA0;<span>The page address shows <code>https://</code></span></p>
+  </details>
+    <main id="main">
+    <h1>OSCAL Catalog Inspector XSLT</h1>
+    <p>Testing and using OSCAL, the <b><a href="https://pages.nist.gov/OSCAL/">Open Security Controls Assessment Language</a></b>.</p>
+    <p>This page provides a validation service. Load your OSCAL catalog and the page shows whether and where it is invalid according to the rules of the <a href="https://pages.nist.gov/OSCAL/resources/concepts/layer/control/catalog/">OSCAL catalog model</a>.</p>
+    <p>Processing is entirely on the client system and entails no data transfer. XSLT logic is maintained in the <a class="external" href="https://github.com/usnistgov/oscal-xslt">OSCAL XSLT</a> repository, from which it can also be acquired and adapted.</p>
+    <details class="boxed">
+      <summary class="aboutbox">About the application</summary>
+      <p>The <a href="https://pages.nist.gov/metaschema/">Metaschema Information Modeling Framework</a> used by OSCAL to support its data modeling provides it with a means of defining its rules abstractly such that they can be checked and enforced by an automated process, independently and agnostically with respect to the data format(s) supported by that process, while the data format is one of XML, JSON or YAML. As an XML-based technology, <a href="https://www.w3.org/TR/xslt-30/">XSLT (XSL Transformations)</a> now in version 3.0 is a capable language for a robust and conformant implementation of Metaschema, starting with its XML-facing capabilities.</p>
+      <p>This page applies the rules defined in the <a href="https://github.com/usnistgov/OSCAL/blob/main/src/metaschema/oscal_catalog_metaschema.xml">OSCAL Catalog Metaschema</a> to XML instances, to determine their conformance to these rules, and reporting discrepancies. It does this independently of other schema technologies including the published OSCAL schemas (XSD and JSON Schema), reporting the same findings for the same inputs. Over controlled testing input, it thus offers cross-checking of technologies being examined, i.e. relevant findings for conformance testing.</p>
+      <p>As a demonstration and proof of concept, this application aims to go beyond showing the delivery of the <i>validation</i> capability as defined by Metaschema. Additionally, it seeks to do so in a testable, traceable and verifiable way. Accordingly it is backed by <a href="../../inspect/testing">conformance testing</a> as well as testing of its functionality and performance. In doing so, it hopes to provide <q>second implementation</q> confirmation of Metaschema semantics, showing their viability.</p>
+      <p>The validation capabilities of Metaschema include not only modeling constraints (such as names and permissible locations of elements to be recognized), but also <i>arbitrary, assertion-based (or <i style="font-style:normal">query-based</i>) constraints</i> over the data set itself, not only its tagging. These applications can range widely from relatively relaxed and permissive definitions to very tight ones, in which not only names and places but also tagging usage, cross-linking and "informational integrity" can be defined, cross-checked and enforced when needed. OSCAL defines a number of such rules with varying complexity, making it a good real-world use case for Metaschema.</p>
+      <p>We welcome ideas, constructive criticism including bug reports with samples, proposals, patches and encouragement. One available channel for feedback is our <a class="external" href="https://github.com/usnistgov/oscal-xslt/issues">project repository issues board</a>.</p>
+    </details>
 
-    </head>
-    <body>
-        <div id="bxheader">
-          <h3 id="page-title" onclick="void(0)">OSCAL Catalog Validator</h3>
-          <h4>Checking your XML document against rules defined by the OSCAL Catalog Metaschema</h4>
-          <h5>NB - work in progress - features and testing still to come -</h5>
-          <p style="font-style:italic">(<b>Coming soon</b> - not just catalogs but other OSCAL models as well)</p></div>
-      <div id="bxbody">
-            <!--<p>body</p>-->
-        </div>
-      <div id="bxhelp">
-          <p>Load your OSCAL XML file(s) here for instant validation... <input
-                type="file" accept=".xml,text/xml"
-                id="loadfileInput" name="loadfileInput" title="Drop XML"
-                onchange="validateFiles(this.files)" /></p>
-        </div>
-      
-      <details style="margin-top: 1em" id="overview">
-        <summary style="font-style:italic">Explanation</summary>
-        <p>The <i>OSCAL Validator</i> reads an arbitrary XML document and reports back findings from an inspection relative to rules
-          defined for the OSCAL catalog (meta)schema:</p>
-        <ul>
-          <li>If it is (not) a <code>catalog</code> XML document in the OSCAL namespace (i.e.,
-            represented to be an OSCAL catalog)</li>
-          <li>If it sees unknown element occurrences (foreign or out of place)</li>
-          <li>On recognized elements, it reports:
-            <ol><li>Unrecognized attributes</li>
-              <li>Required elements and attributes (checking for elements missing)</li>
-              <li>Cardinality (of elements appearing) - too many or too few</li>
-              <li>Order of elements - impermissible element ordering</li>
-              <li>Datatype-based lexical constraints (<q>castable as</q>) constraints (also tested on attributes)</li>
-              <li><em>To come</em>... further metaschema-based constraints (<code>allowed-values</code> etc.)</li></ol></li>
-        </ul>
-        <p>Effectively, this feature set is intended to match that of the normative XML Schema Definition (XSD)-based expression of constraints defining the (XML) OSCAL catalog format. If you find any disparities between this tool, and a compliant application of the OSCAL catalog XSD, please let the developer know.</p>
-      </details>
-        <div id="bxfooter">
-          <p>The <i>SP 800-53 Catalog Validator</i> is an <a href="https://pages.nist.gov/OSCAL/">OSCAL</a> demonstration. Use with appropriate caution. Source code is available for inspection or analysis.</p>
-            <p>Data processing on this page runs entirely in your browser, under <a href="https://www.saxonica.com/saxon-js/index.xml">SaxonJS</a>. No data is transferred to any other party, monitored or analyzed in any way other than what is displayed.</p>
-        </div>
-    </body>
+  </main>
+    <div class="project-footer">
+      <p>This site is maintained by the Secure Systems and Applications Group, Computer Security Division (CSD)</p>
+      <p>National Institute of Standards and Technology, Information Technology Laboratory (NIST/ITL).</p>
+      <div style="margin: auto 0em">
+        <button id="main-improve-page" onclick="window.location.href='https://github.com/usnistgov/oscal-xslt/tree/main/pub/index.html'">Improve this page</button>
+      </div>
+    </div>
+    <script src="site/nist-bounce.js"> </script>
+    
+  </body>
+  
 </html>

@@ -29,6 +29,8 @@ details.boxed > *:last-child { margin-bottom: 0em }
 details#sec-notice { margin: 0em; padding: 0.2em;
   text-align: right; font-size: smaller; background-color: lightgrey  }
 
+.aboutbox { font-style: italic }
+  
 #sec-notice p { margin: 0em; max-width: inherit }
 #sec-notice p span:before { content: '• '  } /* bullet */
 #sec-notice p span:hover { background-color: gainsboro  }

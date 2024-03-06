@@ -23,13 +23,19 @@ Some XSLTs in this site may include or import logic from other XSLTs in this rep
 
 Nonetheless to aid in transparency, this project places all entry-point XSLTs in appropriate directories, so they can be linked to, examined and downloaded, and their dependencies traced. So each project will have at least one XSLT to be used as a 'root' for applications. In general, this XSLT is kept next do the SEF file produced from it. So a page that uses an SEF `oscal-transform.sef.json` is likely to have a corresponding XSLT next to it, `oscal-transform.xsl`, from which the distribution JSON file is compiled (and see below).
 
+### Running this site
+
+Since specialized logic is entirely encapsulated, this web site can be served by any generic HTTP web server set up for HTML and JSON delivery.
+
+For development we use [Node JS `http-server`](https://www.npmjs.com/package/http-server).
+
 ### Saxon library update
 
 The SaxonJS distribution must be available in the [lib](lib) subdirectory for scripts to function.
 
 Specifically, the file `lib/saxon-js/SaxonJS2.rt.js` will be called from scripts in the loaded HTML pages. This reduced runtime supports all of XSLT 3.0/XPath 3.1 except the `transform()` function, which requires an on-board compiler (available in `SaxonJS3.js`) but not used by any transformations here. (At time of writing.)
 
-Download the library by running [the script](lib/download-saxonjs.sh) given in the directory (bash script requiring `curl` and `zip`).
+Download the library by running [the script](lib/download-saxonjs.sh) given in the directory (a `bash` script requiring `curl` and `zip`).
 
 For SaxonJS and Saxon in the browser see https://www.saxonica.com/saxon-js/documentation2/index.html.
 
@@ -41,7 +47,7 @@ Compiling the XSLT into SEF requires Saxon, either licensed SaxonJ (Java, versio
 
 For NodeJS, install [SaxonJS](https://www.npmjs.com/package/saxon-js) and [xslt3](https://www.npmjs.com/package/xslt3) via NPM.
 
-Scripts or documents per project will commonly capture command-line configurations and options.
+Scripts or documents per project will commonly capture command-line configurations and options. So for example see the script `InspectorXSLT/compile-inspector.sh`, which calls SaxonJS under Node JS to compile an XSLT and produce SEF for it.
 
 ### Ideas
 

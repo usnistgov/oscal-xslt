@@ -38,3 +38,17 @@ Note that presently only the catalog model is supported. TBD is a plan for other
 1. Try with some larger files
 1. Load OSCAL from test repo? (../../inspect/ might have XSpec testing OSCAL?)
 1. Save out error/warnings report (XML or plain text?)
+
+## To do
+
+Write SaxonJS script to refresh and update the Inspector XSLT dynamically
+straight from metaschema source
+
+https://github.com/usnistgov/OSCAL/releases/download/v1.1.2/oscal_catalog_metaschema_RESOLVED.xml
+
+(RESOLVED version has no dependence on entity resolution)
+
+step 1 - pipeline Metaschema composition?
+step 2 - Metaschema->OSCAL Inspector - InspectorXSLT followed by OSCAL fixup i.e. duplicating ../inspect production pipeline in NodeJS
+step 3 - Compile this XSLT producing SEF
+

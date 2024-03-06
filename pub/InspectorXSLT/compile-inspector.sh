@@ -5,30 +5,28 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../common/subcommand_common.bash
-source "$SCRIPT_DIR/../common/subcommand_common.bash"
+# source "$SCRIPT_DIR/../common/subcommand_common.bash"
 
 usage() {
     cat <<EOF
 Usage: ${BASE_COMMAND:-$(basename "${BASH_SOURCE[0]}")} SCHEMA_CODE [ADDITIONAL_ARGS]
 
-If SCHEMA_CODE is given as 'catalog', this script updates oscal-catalog_inspector.xsl using XProc pipeline generate/OSCAL-CATALOG-INSPECTOR-XSLT.xpl
+If SCHEMA_CODE is given as 'catalog', this script updates catalog-validator.sef.json using the SaxonJS `xslt3` transformation engine
 
 Until other models are supported, any other argument returns this message.
+
+For convenience, additional arguments are passed to `xslt`.
 
 EOF
 }
 
-
-# REWRITE TO EXECUTE NODE JS CALL TO SAXON JS TO COMPILE XSLT #
-
-if ! [ -x "$(command -v mvn)" ]; then
-  echo 'Error: Maven (mvn) is not in the PATH, is it installed?' >&2
+if ! [ -x "$(command -v xslt3)" ]; then
+  echo 'Error: SaxonJS is not installed - please check https://www.saxonica.com/saxon-js/ ?' >&2
   exit 1
 fi
 
-
 [[ -z "${1-}" ]] && { echo "Error: OSCAL module not specified with SCHEMA_CODE ('catalog')"; usage; exit 1; }
-METASCHEMA_SOURCE=$1
+MODULE=$1
 
 ADDITIONAL_ARGS=$(shift 1; echo ${*// /\\ })
 
@@ -42,8 +40,8 @@ if [ "$1" = 'catalog' ]
 
 then
 
-  echo Refreshing oscal-catalog_inspector.xsl ...
-  invoke_calabash "${CALABASH_ARGS}"
+  echo Refreshing catalog-validator.sef.json ...
+  xslt3 -export:site/$MODULE-validator.sef.json -xsl:$MODULE-validator.xsl -nogo
   ECHO ... Done
   
 else
