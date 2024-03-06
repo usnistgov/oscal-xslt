@@ -28,6 +28,8 @@ See the [LICENSE.md](LICENSE.md) file. As work product of a Bureau of the Depart
 
 To confirm the currency of the license, see the NIST Open license page at https://www.nist.gov/open/license#software.
 
+Some software components used by demonstrations in this repository are distributed under their own licenses. Such licenses are kept with the code they entail.
+
 ###  Installation and use
 
 Generally speaking these are XSLT applications, either single transformations, stacked transformations (in which imported layers provide fallbacks and importing layers, customizations), or pipelines of transformations, requiring XSLT versions as recent as [XSLT Version 3.0](https://www.w3.org/XML/Group/qtspecs/specifications/xslt-30/html/) with [XPath Version 3.1](https://www.w3.org/TR/xpath-31/).

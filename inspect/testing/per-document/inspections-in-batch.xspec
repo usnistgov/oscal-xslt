@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../../../../testing/xspec-assurance.sch"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+   xmlns:mx="http://csrc.nist.gov/ns/csd/metaschema-xslt"
+   stylesheet="../../current/computer_metaschema-inspector.xsl"
+   xslt-version="3.0">
+
+    <!-- Purpose: XSpec testing the validation of known-valid and known-invalid sets
+     against 'computer' constraints defined by computer_metaschema.xml
+     and implemented by the linked XSLT.
+    
+     These tests establish the correctness of determining 'valid' and 'invalid' 
+     for a document as a whole, irrespective of detail or specifics.
+     
+     Schematron ../../../testing/xspec-assurance.sch can be used to validate
+       are referenced files in place?
+     
+    -->
+
+    <!-- NB this pattern is regular enough so the XSpec could be generated
+     dynamically from a list of valid and invalid instances, or from directory listings. -->
+
+   <x:variable name="mx:makes-reports" as="function(*)" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        select="function($d as node()) as xs:boolean { exists($d/descendant-or-self::mx:report) }"/>
+
+    <x:scenario label="[A] Reports are made for all files given as invalid">
+        <x:scenario label="[A.1] invalid1.xml">
+            <x:context href="../../computer-invalid/invalid1.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.2] invalid2.xml">
+            <x:context href="../../computer-invalid/invalid2.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.3] invalid3.xml">
+            <x:context href="../../computer-invalid/invalid3.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.4] invalid4.xml">
+            <x:context href="../../computer-invalid/invalid4.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.5] invalid5.xml">
+            <x:context href="../../computer-invalid/invalid5.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.6] invalid6.xml">
+            <x:context href="../../computer-invalid/invalid6.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.7] invalid7.xml">
+            <x:context href="../../computer-invalid/invalid7.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.8] invalid8.xml">
+            <x:context href="../../computer-invalid/invalid8.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.9] invalid9.xml">
+            <x:context href="../../computer-invalid/invalid9.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+        <x:scenario label="[A.10] invalid10.xml">
+            <x:context href="../../computer-invalid/invalid10.xml" mode="validate"/>
+            <x:expect label="appears not to be valid" test="$x:result => $mx:makes-reports()"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="[B] No reports are made for any files given as valid">
+        <x:scenario label="[B.1] valid1.xml">
+            <x:context href="../../computer-valid/valid1.xml" select="/*" mode="validate"/>
+            <x:expect label="appears to be valid" test="$x:result => $mx:makes-reports() => not()"/>
+        </x:scenario>
+        <x:scenario label="[B.2] valid2.xml">
+            <x:context href="../../computer-valid/valid2.xml" select="/*" mode="validate"/>
+            <x:expect label="appears to be valid" test="$x:result => $mx:makes-reports() => not()"/>
+        </x:scenario>
+        <x:scenario label="[B.3] valid3.xml">
+            <x:context href="../../computer-valid/valid3.xml" select="/*" mode="validate"/>
+            <x:expect label="appears to be valid" test="$x:result => $mx:makes-reports() => not()"/>
+        </x:scenario>
+        <x:scenario label="[B.4] valid4.xml">
+            <x:context href="../../computer-valid/valid4.xml" select="/*" mode="validate"/>
+            <x:expect label="appears to be valid" test="$x:result => $mx:makes-reports() => not()"/>
+        </x:scenario>
+    </x:scenario>
+
+</x:description>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>OSCAL XSLT Exhibition</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="site/nist-boilerplate.css" type="text/css" />
+    <link rel="stylesheet" href="site/nist-combined.css" type="text/css" />
+    <style type="text/css">
+.linkpanels { background-color: #d9e8f6; padding: 0.6em; max-width: 48em }
+.linkpanels div.project { background-color: white; padding: 0.6em; margin-top: 0.6em; border-left: medium solid #162e51 }
+
+div.project *:first-child { margin-top: 0em }
+div.project *:last-child { margin-bottom: 0em }
+  
+.linkpanels h3:first-child { margin: 0em }
+
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <!-- Remove the nist-header-footer.js script to drop the NIST header and footer  -->
+    <script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+    <!-- https://github.com/usnistgov/pages-root/wiki/Adding-NIST-required-branding-and-features-to-your-site -->
+    <!-- Google analytics    -->
+    <script async="async" type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST%26subagency=github%26pua=UA-66610693-1%26yt=true%26exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script>
+    <script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+  </head>
+  <!-- templating help at https://pages.nist.gov/nist-header-footer/ -->
+  <body>
+    <div style="display: none" class="teaser">Tools for using OSCAL, the Open Security Controls Assessment Language</div>
+    <details id="sec-notice">
+    <summary>Is this site a preview, mockup or spoof? - <i><b>How you can know</b></i></summary>
+    <p><span>The real site domain ends in <code>nist.gov</code></span>&#xA0;<span>The page address shows <code>https://</code></span></p>
+  </details>
+    <main id="main">
+    <h1>OSCAL XSLT Exhibition</h1>
+    <p>Testing and using OSCAL, the <b><a href="https://pages.nist.gov/OSCAL/">Open Security Controls Assessment Language</a></b>.</p>
+    <p>This site provides a runtime environment and platform for experimental and demonstration OSCAL applications.</p>
+    <p>XSLT logic is maintained in the <a class="external" href="https://github.com/usnistgov/oscal-xslt">OSCAL XSLT</a> repository, from which it can also be acquired and adapted.</p>
+    <div class="linkpanels">
+        <h3>On this site</h3>
+          <div class="project"><p><a href="InspectorXSLT/catalog.html">OSCAL Catalog Inspector</a> XML Validator</p>
+          <p>Test your OSCAL XML catalog for its conformance with rules of its metaschema.</p>
+          <details class="boxed">
+            <summary class="aboutbox">What is an OSCAL metaschema and what are its rules?</summary>
+            <p>The OSCAL Catalog Metaschema is a formal specification of the rules that define an OSCAL catalog.</p>
+            <p>An XML document that conforms to these rules (as they apply to XML) is said to be <i>valid</i> to the metaschema. Because they follow the same rules, valid documents are fit for processing within systems built for them, no matter how they are created, or by whom. Subject to known limits, they become interchangeable. Because (and to the extent that) these rules of validity have been formalized, determinations of validity can be programmed and made rapidly and at scale.</p>
+            <p>This can be achieved by means of generic XML schemas and processing configured and customized for the purpose, or by
+              services or third-party utilities that embed the same rule set to detect the same errors.</p>
+            <p>Since the metaschema that defines these rules is abstract, conformance of such tools can be assessed externally and independently for any metaschema by means of a testing suite consisting of sets of known-valid and known-invalid examples and cases. Such a testing suite is offered for this utility as its applies to OSCAL (catalogs and other formats) in its repository.</p>
+            <p>OSCAL developers and developers of Metaschema-based tools may be interested because while it functions in this site, the XSLT is also designed for maximum convenience and portability.</p>
+          </details>
+        </div>
+          
+      <!-- p><a href="directory.xml">Project directory here</a></!-->
+    </div>
+    <div>
+      <p>Additionally, see OSCAL applications among the client-side XSLT 1.0 demonstrations in the <a href="https://pages.nist.gov/xslt-blender/">XSLT Blender</a> project.</p></div>
+    <details class="boxed">
+      <summary class="aboutbox">About the currently active projects</summary>
+      <p>The projects listed above are active and available for testing and use. Unless and to the extent otherwise stated, projects do <i>not</i> require any data transfer over the Internet to function. Your data remains on your system even offered to the browser for processing.</p>
+      <p>Regarding any project but especially the projects listed, we welcome ideas, constructive criticism including bug reports with samples, proposals, patches and encouragement. One available channel for feedback is our <a class="external" href="https://github.com/usnistgov/oscal-xslt/issues">project repository issues board</a>.</p>
+    </details>
+    <details class="boxed">
+      <summary class="aboutbox">About the site</summary>
+      <p>While offered here in the form of functioning applications delivered over the web, the logic used by these pages is also portable into any other environment that supports the fourth-generation language <a href="https://www.w3.org/TR/2017/REC-xslt-30-20170608/">XSLT 3.0</a>, to achieve the same results over comparable inputs.</p>
+      <p>With other advantages, this basis in standards and commodity tools provides utilities here with transparency and <i>testability</i>, as the entire code base can be inspected and run under controlled conditions. <a href="https://github.com/usnistgov/oscal-xslt">See the repository</a> for more details.</p>
+      <p>We welcome ideas, constructive criticism including bug reports with samples, proposals, patches and encouragement. One available channel for feedback is our <a class="external" href="https://github.com/usnistgov/oscal-xslt/issues">project repository issues board</a>.</p>
+    </details>
+
+  </main>
+    <div class="project-footer">
+      <p>This site is maintained by the Secure Systems and Applications Group, Computer Security Division (CSD)</p>
+      <p>National Institute of Standards and Technology, Information Technology Laboratory (NIST/ITL).</p>
+      <div style="margin: auto 0em">
+        <button id="main-improve-page" onclick="window.location.href='https://github.com/usnistgov/oscal-xslt/tree/main/pub/index.html'">Improve this page</button>
+      </div>
+    </div>
+    <script src="site/nist-bounce.js"> </script>
+    
+  </body>
+  
+</html>

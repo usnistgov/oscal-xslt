@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../../testing/xspec-assurance.sch"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+   xmlns:mx="http://csrc.nist.gov/ns/csd/metaschema-xslt"
+   stylesheet="../../current/computer_metaschema-inspector.xsl"
+  xmlns="http://example.com/ns/computer"
+  xslt-version="3.0">
+
+   <!-- This XSpec does two things:
+
+1. Smoke testing at top level - is everything in place?
+2. Demonstrating and documenting patterns we can follow including
+
+- inline and out of line examples
+- comparing results after post-processing with cleaner/normalizer (maintained in helper XSLT)
+- testing results directly vs using the helper function
+- no-op calls to test processor not XSLT
+- local function declaration - note $ in call to $mx:makes-a-date
+
+Modes to test:
+  In mode 'validate' a node is copied and tested, and its children processed in 'validate'
+  In mode 'test' a node is tested (only) to return messages
+  
+-->
+
+   <x:helper stylesheet="../../../mx-reporter.xsl"/>
+
+   <x:variable name="mx:makes-a-date" as="function(*)"  
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      select="function($v as item()) as xs:boolean { $v castable as xs:date }"/>
+
+   <!-- Just testing XPath in this processor -->
+   <x:scenario label="[A] 'castable as' operation works on a few edge cases">
+      <x:call function="true"/>   
+      <x:scenario label="[A.0] A certain failure" pending="when a failure is wanted">
+         <x:expect label="fails, because false is not true" test="false()"/>
+      </x:scenario>
+      <x:scenario label="[A.1] For April 0">
+         <!-- ... with a test independent of context ... -->
+         <x:expect label="0th day is not castable" test="not($mx:makes-a-date('2023-04-00'))"/>
+      </x:scenario>
+      <x:scenario label="[A.2] For April 1">
+         <x:expect label="1st day is castable" test="$mx:makes-a-date('2023-04-01')"/>
+      </x:scenario>
+      <x:scenario label="[A.3] For April 31">
+         <x:expect label="31st is not castable" test="not($mx:makes-a-date('2023-04-31'))"/>
+      </x:scenario>
+      <x:scenario label="[A.4] 13 13?">
+         <x:expect label="13th month is not castable" test="not($mx:makes-a-date('2023-13-13'))"/>
+      </x:scenario>
+      <x:scenario label="[A.5] A Leap Day">
+         <x:expect label="is castable" test="$mx:makes-a-date('2024-02-29')"/>
+      </x:scenario>
+      <x:scenario label="[A.6] A fake Leap Day">
+         <x:expect label="is not castable" test="not($mx:makes-a-date('2023-02-29'))"/>
+      </x:scenario>
+   </x:scenario>
+
+   <x:scenario label="[B] A simple but valid document (element) copies through">
+      <x:variable name="valid-file"  href="../../computer-valid/valid1.xml"/>
+      <x:scenario label="[B.1] - A 'computer' document">
+         <!--  selecting '/' passes the root of the tree in as wanted, instead of the element alone. -->
+         <x:context select="/">
+            <computer id="abc">
+               <prop name="model" value="Hal9000"/>
+            </computer>
+         </x:context>
+         <x:expect label="comes through as a copy with a 'validation' wrapper with metadata">
+            <mx:validation src="...">
+               <mx:metaschema version="0.0.5"
+                  shortname="computer"
+                  namespace="http://example.com/ns/computer">Computer Model</mx:metaschema>
+               <computer id="abc">
+                  <prop name="model" value="Hal9000"/></computer>
+            </mx:validation>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[B.2] A 'computer' document in 'validate' mode">
+         <x:context mode="validate">
+            <computer id="abc">
+               <prop name="model" value="Hal9000"/></computer>
+         </x:context>
+         <x:expect label="remains a computer, keeping @id">
+            <computer id="abc">
+               <prop name="model" value="Hal9000"/></computer>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[B.3] A valid file instance in no mode">
+         <x:context href="../../computer-valid/valid1.xml"/>
+         <x:expect label="shows it has been validated" test="exists($x:result/self::mx:validation)"/>
+      </x:scenario>
+      <x:scenario label="[B.4] A valid file instance in no mode">
+         <x:context href="../../computer-valid/valid1.xml"/>
+         <x:expect label="brings its copy with its validation"
+            test="deep-equal($x:result/self::mx:validation/(child::* except mx:*),$valid-file/child::*)"/>
+      </x:scenario>
+      <x:scenario label="[B.5] A valid instance in 'validate' mode">
+         <x:context mode="validate" href="../../computer-valid/valid1.xml"/>
+         <!-- https://github.com/xspec/xspec/wiki/Writing-Scenarios#describing-an-xsboolean-xpath-expression -->
+         <x:expect label="comes through as a (clean) copy of itself" test="deep-equal($x:result,$valid-file)"/>
+      </x:scenario>
+   </x:scenario>
+
+   <x:scenario label="[C] Haphazard unknown inputs are intercepted and reported">
+      <x:scenario label="[C.1] An unknown element">
+         <x:context mode="validate">
+            <e/>
+         </x:context>
+         <x:expect label="is marked as unexpected">
+            <e>
+               <mx:report cf="..." test="exists(.)" class="_UE unmatched-element"
+                  xpath="/e" level="ERROR">Unrecognized element <mx:gi>e</mx:gi>.</mx:report>
+            </e>
+         </x:expect>
+      </x:scenario>
+      <x:scenario label="[C.2] An unknown attribute on a known element">
+         <x:context mode="validate">
+            <computer id="c" nope="x">
+               <prop name="model" value="Hal9000"/>
+            </computer>
+         </x:context>
+         <x:expect label="is also marked as unexpected">
+            <computer id="c" nope="x">
+               <mx:report cf="..." test="exists(.)" class="_UA unmatched-attribute"
+               xpath="/computer/@nope" level="ERROR">Unrecognized attribute <mx:gi>@nope</mx:gi> on element <mx:gi>computer</mx:gi>.</mx:report>
+               <prop name="model" value="Hal9000"/>   
+            </computer>
+         </x:expect>
+      </x:scenario>
+   </x:scenario>
+
+   <x:scenario label="[D] Comments are copied and PIs are dropped">
+      <x:scenario label="[D.1] Comment">
+         <x:variable name="mx:a-comment"><!--comment--></x:variable>
+         <x:context select="$mx:a-comment" mode="validate"/>
+         <x:expect label="is copied" select="$mx:a-comment"/>
+      </x:scenario>
+      <x:scenario label="[D.2] Processing instruction">
+         <x:context mode="validate"><?pi type="sample" href="file.css"?></x:context>
+         <x:expect label="is dropped" select="()"/>
+      </x:scenario>
+   </x:scenario>
+
+   <x:scenario label="[E] A cleaning-up post-process returns only the reports, not a copy">
+      <x:scenario label="[E.1] For an unknown element">
+         <x:context mode="validate">
+            <nil/>
+         </x:context>
+         <x:expect label="we see a single error report marking it as unexpected" test="mx:pull-reports($x:result)">
+            <mx:report cf="..." test="exists(.)" class="_UE unmatched-element"
+               xpath="/nil" level="ERROR">Unrecognized element <mx:gi>nil</mx:gi>.</mx:report>
+         </x:expect>
+      </x:scenario>
+   </x:scenario>
+
+   <x:scenario label="[F] Both inline and externally stored instances can be loaded and checked">
+      <x:scenario label="[F.1] A valid file">
+         <x:context href="../../computer-valid/valid1.xml" mode="validate"/>
+         <x:expect label="gets no reports" test="empty($x:result//mx:report)"/>
+      </x:scenario>
+      <x:scenario label="[F.2] Given as a literal, an invalid instance">
+         <x:context mode="validate">
+            <computer id="id1">
+               <motherboard>
+                  <vendor id="id3">
+                     <name>name0</name>
+                     <address>address0</address>
+                     <website>http://pages.nist.gov/metaschema</website>
+                  </vendor>
+                  <!-- 'type' and 'memory' are both missing -->
+               </motherboard>
+            </computer>
+         </x:context>
+         <x:expect label="produces at least one report" test="exists($x:result//mx:report)"/>
+      </x:scenario>
+      <x:scenario label="[F.3] An invalid file on the file system">
+         <x:context href="../../computer-invalid/invalid1.xml" mode="validate"/>
+         <x:expect label="likewise produces at least one report" test="exists($x:result//mx:report)"/>
+      </x:scenario>
+   </x:scenario>
+
+</x:description>
